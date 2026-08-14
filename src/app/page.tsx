@@ -52,7 +52,7 @@ export default async function Home() {
 
         {/* Фото — единство двух ракеток */}
         <div className="relative">
-          <div className="max-w-md mx-auto rounded-[2rem] border border-line bg-surface overflow-hidden">
+          <div className="max-w-md mx-auto rounded-[2rem] border border-line bg-cream overflow-hidden">
             <div className="h-1 flex">
               <span className="flex-1 bg-green" />
               <span className="flex-1 bg-burgundy" />
@@ -61,8 +61,8 @@ export default async function Home() {
             <img
               src="/hero-rackets.jpg"
               alt="Падел-ракетка и теннисная ракетка"
-              width={720}
-              height={537}
+              width={1572}
+              height={1422}
               className="w-full h-auto"
             />
             <div className="flex items-center justify-center gap-3 text-sm font-semibold py-4 border-t border-line-soft">

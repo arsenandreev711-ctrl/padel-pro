@@ -19,7 +19,8 @@ export const demoAwards: Record<string, { tournament_id: string; tournament_name
   p1: [
     { tournament_id: "tf1", tournament_name: "Bishkek Padel Cup 2025", sport: "padel", place: 1, date: days(-40) },
     { tournament_id: "tf2", tournament_name: "Ala-Too Tennis Open", sport: "tennis", place: 2, date: days(-70) },
-    { tournament_id: "tf3", tournament_name: "Winter Padel Series", sport: "padel", place: 5, date: days(-110) },
+    { tournament_id: "tf3", tournament_name: "Winter Padel Series", sport: "padel", place: 3, date: days(-110) },
+    { tournament_id: "tf4", tournament_name: "Ala-Too Autumn Cup", sport: "tennis", place: 8, date: days(-140) },
   ],
   p2: [
     { tournament_id: "tf1", tournament_name: "Bishkek Padel Cup 2025", sport: "padel", place: 3, date: days(-40) },
