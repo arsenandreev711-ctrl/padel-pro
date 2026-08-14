@@ -1,37 +1,72 @@
-@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
+/* Padel-PRO — минимализм, единство падела (зелёный) и тенниса (бордовый) */
 @theme {
-  --color-primary: #2563eb;
-  --color-on-primary: #ffffff;
-  --color-secondary: #7c3aed;
-  --color-accent: #f59e0b;
-  --color-bg: #eff6ff;
-  --color-fg: #0f172a;
-  --color-muted: #f1f5fd;
-  --color-line: #e4ecfc;
-  --color-danger: #dc2626;
-  --font-display: "Barlow Condensed", sans-serif;
-  --font-body: "Barlow", sans-serif;
+  --color-cream: #f5f2ea;      /* тёплый фон */
+  --color-surface: #ffffff;    /* карточки */
+  --color-ink: #16241d;        /* основной текст, тёмно-зелёно-чёрный */
+  --color-ink-soft: #4b5a52;   /* второстепенный текст */
+  --color-green: #16653f;      /* падел / основной */
+  --color-green-deep: #0f4c30;
+  --color-burgundy: #7a1f3d;   /* теннис / акцент */
+  --color-burgundy-deep: #5e162e;
+  --color-line: #e2ddd1;       /* границы */
+  --color-line-soft: #ece8de;
+  --color-danger: #a3341f;
+
+  --font-display: "Bricolage Grotesque", sans-serif;
+  --font-body: "Instrument Sans", sans-serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-fg);
+  background: var(--color-cream);
+  color: var(--color-ink);
   font-family: var(--font-body);
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, .display {
   font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Плавное появление при скролле — только transform/opacity */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  will-change: opacity, transform;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Мягкий подъём карточек */
+.lift {
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
+}
+.lift:hover {
+  transform: translateY(-3px);
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .lift { transition: none; }
+  .lift:hover { transform: none; }
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
   }
 }

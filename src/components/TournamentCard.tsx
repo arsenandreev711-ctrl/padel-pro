@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, Banknote, Medal } from "lucide-react";
+import { Calendar, MapPin, Users, Banknote } from "lucide-react";
 import type { Tournament } from "@/lib/types";
 import type { Dict, Lang } from "@/lib/i18n";
 import { SportBadge } from "./SportBadge";
@@ -14,47 +14,51 @@ export function TournamentCard({
   lang: Lang;
 }) {
   const joined = tr.tournament_players?.length ?? 0;
+  const accent = tr.sport === "padel" ? "text-green" : "text-burgundy";
   return (
-    <div className="rounded-2xl border border-line bg-white p-5 flex flex-col gap-3 hover:shadow-lg hover:border-secondary/40 transition-all duration-200">
+    <div className="lift rounded-2xl border border-line bg-surface p-6 flex flex-col gap-3.5 hover:shadow-[0_16px_40px_-16px_rgba(22,36,29,0.2)]">
       <div className="flex items-center justify-between gap-2">
         <SportBadge sport={tr.sport} t={t} />
-        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-secondary/10 text-secondary">
+        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-cream border border-line-soft text-ink-soft">
           {t.statusMap[tr.status]}
         </span>
       </div>
 
-      <h3 className="text-2xl font-bold display flex items-center gap-2">
-        <Medal size={20} className="text-accent" />
-        {tr.name}
-      </h3>
+      <h3 className="text-2xl font-bold display leading-tight">{tr.name}</h3>
 
-      <div className="flex flex-col gap-1.5 text-sm text-fg/80">
-        <span className="flex items-center gap-2">
-          <Calendar size={15} className="text-secondary" />
+      <div className="flex flex-col gap-2 text-sm text-ink-soft">
+        <span className="flex items-center gap-2.5">
+          <Calendar size={15} className={accent} />
           {fmtDate(tr.starts_at, lang)}
         </span>
         {tr.courts && (
-          <span className="flex items-center gap-2">
-            <MapPin size={15} className="text-secondary" />
+          <span className="flex items-center gap-2.5">
+            <MapPin size={15} className={accent} />
             {tr.courts.name}
           </span>
         )}
-        <span className="flex items-center gap-2">
-          <Users size={15} className="text-secondary" />
+        <span className="flex items-center gap-2.5">
+          <Users size={15} className={accent} />
           {joined}/{tr.max_players} {t.players}
         </span>
         {tr.price_som != null && (
-          <span className="flex items-center gap-2">
-            <Banknote size={15} className="text-secondary" />
+          <span className="flex items-center gap-2.5">
+            <Banknote size={15} className={accent} />
             {tr.price_som} {t.som}
           </span>
         )}
-        <span className="text-fg/60">
-          {t.format}: <b>{tr.format}</b>
+      </div>
+
+      <div className="flex items-center gap-2 text-xs">
+        <span className="text-ink-soft">{t.format}</span>
+        <span className="font-semibold px-2 py-0.5 rounded-full bg-cream border border-line-soft">
+          {tr.format}
         </span>
       </div>
 
-      {tr.description && <p className="text-sm text-fg/60">{tr.description}</p>}
+      {tr.description && (
+        <p className="text-sm text-ink-soft/80">{tr.description}</p>
+      )}
     </div>
   );
 }

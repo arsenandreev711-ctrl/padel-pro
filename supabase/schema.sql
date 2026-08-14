@@ -26,8 +26,20 @@ create table players (
   city text not null default 'Бишкек',
   phone text,
   avatar_url text,
+  side_padel text check (side_padel in ('L','R','both')),
+  side_tennis text check (side_tennis in ('L','R','both')),
   created_at timestamptz not null default now()
 );
+
+-- История рейтинга (для графика в профиле)
+create table rating_history (
+  id uuid primary key default uuid_generate_v4(),
+  player_id uuid not null references players(id) on delete cascade,
+  sport sport_type not null,
+  rating int not null,
+  created_at timestamptz not null default now()
+);
+create index rating_history_player_idx on rating_history (player_id, sport, created_at);
 
 -- Рейтинг игрока по каждому виду спорта
 create table ratings (
@@ -109,6 +121,7 @@ alter table matches
 -- RLS: публичное чтение, запись только через service role (админка на сервере)
 alter table courts enable row level security;
 alter table players enable row level security;
+alter table rating_history enable row level security;
 alter table ratings enable row level security;
 alter table matches enable row level security;
 alter table games enable row level security;
@@ -118,6 +131,7 @@ alter table tournament_players enable row level security;
 
 create policy "public read courts" on courts for select using (true);
 create policy "public read players" on players for select using (true);
+create policy "public read rating_history" on rating_history for select using (true);
 create policy "public read ratings" on ratings for select using (true);
 create policy "public read matches" on matches for select using (true);
 create policy "public read games" on games for select using (true);
@@ -125,8 +139,13 @@ create policy "public read game_players" on game_players for select using (true)
 create policy "public read tournaments" on tournaments for select using (true);
 create policy "public read tournament_players" on tournament_players for select using (true);
 
--- Демо-данные: корты Бишкека
+-- Корты Бишкека
 insert into courts (name, city, address, sports) values
-  ('Padel Club Bishkek', 'Бишкек', 'ул. Ахунбаева 97', '{padel}'),
-  ('Ala-Too Tennis Club', 'Бишкек', 'пр. Чуй 158', '{tennis}'),
-  ('Dordoi Sport Arena', 'Бишкек', 'ул. Кожевенная 74', '{padel,tennis}');
+  ('Mr. Padel', 'Бишкек', 'ул. Токомбаева 52в/7', '{padel}'),
+  ('КФСО Динамо', 'Бишкек', 'ул. Водопроводная 4', '{tennis}'),
+  ('T-club', 'Бишкек', 'ул. Токтогула 75/3', '{tennis}'),
+  ('Ernin Tennis School', 'Бишкек', 'ул. Ахунбаева 97Б', '{tennis}'),
+  ('Корты Парка Панфилова', 'Бишкек', 'ул. Тоголок Молдо 17а', '{tennis}'),
+  ('Академия Тенниса', 'Бишкек', 'ул. Исакеева 4', '{tennis}'),
+  ('Теннисные корты (4-й мкр)', 'Бишкек', '4-й микрорайон 19/1', '{tennis}'),
+  ('Family Sport', 'Бишкек', 'ул. Ахунбаева 2/4', '{tennis}');

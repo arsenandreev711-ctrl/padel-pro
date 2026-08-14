@@ -5,8 +5,22 @@ import {
   demoPlayers,
   demoRatings,
   demoTournaments,
+  demoAwards,
+  demoTournamentsPlayed,
+  demoCourts,
 } from "./demo-data";
-import type { Game, Match, Player, Rating, Sport, Tournament } from "./types";
+import { eloToLevel } from "./grading";
+import type {
+  Court,
+  Game,
+  Match,
+  Player,
+  PlayerAward,
+  Rating,
+  RatingPoint,
+  Sport,
+  Tournament,
+} from "./types";
 
 export const isDemo = () => !hasSupabase();
 
@@ -84,6 +98,13 @@ export async function getTournaments(): Promise<Tournament[]> {
   return (data as Tournament[]) ?? [];
 }
 
+export async function getCourts(): Promise<Court[]> {
+  const supa = supaAnon();
+  if (!supa) return demoCourts;
+  const { data } = await supa.from("courts").select("*").order("name");
+  return (data as Court[]) ?? [];
+}
+
 export async function getAllPlayers(): Promise<Player[]> {
   const supa = supaAnon();
   if (!supa) return demoPlayers;
@@ -102,4 +123,95 @@ export async function getPlayersMap(ids: string[]): Promise<Record<string, Playe
   const { data } = await supa.from("players").select("*").in("id", ids);
   for (const p of (data as Player[]) ?? []) map[p.id] = p;
   return map;
+}
+
+// ——— Профиль: история рейтинга, награды, турниры ———
+
+function seedFrom(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+export async function getRatingHistory(
+  playerId: string,
+  sport: Sport,
+  currentRating: number
+): Promise<RatingPoint[]> {
+  const supa = supaAnon();
+  if (supa) {
+    const { data } = await supa
+      .from("rating_history")
+      .select("rating, created_at")
+      .eq("player_id", playerId)
+      .eq("sport", sport)
+      .order("created_at");
+    const rows = (data as { rating: number; created_at: string }[]) ?? [];
+    if (rows.length > 1) {
+      return rows.map((d) => ({
+        date: d.created_at,
+        rating: d.rating,
+        level: eloToLevel(d.rating),
+      }));
+    }
+    return [
+      {
+        date: new Date().toISOString(),
+        rating: currentRating,
+        level: eloToLevel(currentRating),
+      },
+    ];
+  }
+  // demo: детерминированная история ~12 точек
+  const n = 12;
+  const seed = seedFrom(playerId + sport);
+  const start = currentRating - 90 - (seed % 40);
+  const pts: RatingPoint[] = [];
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const base = start + (currentRating - start) * (0.15 + 0.85 * t);
+    const wave = Math.sin((seed % 7) + i * 0.9) * 12 * (1 - t * 0.4);
+    const rating = Math.round(i === n - 1 ? currentRating : base + wave);
+    const date = new Date(Date.now() - (n - 1 - i) * 14 * 864e5).toISOString();
+    pts.push({ date, rating, level: eloToLevel(rating) });
+  }
+  return pts;
+}
+
+interface AwardRow {
+  place: number;
+  tournament_id: string;
+  tournaments?: { name?: string; sport?: Sport; starts_at?: string } | null;
+}
+
+export async function getPlayerAwards(playerId: string): Promise<PlayerAward[]> {
+  const supa = supaAnon();
+  if (!supa) {
+    return (demoAwards[playerId] ?? []).slice().sort((a, b) => a.place - b.place);
+  }
+  const { data } = await supa
+    .from("tournament_players")
+    .select("place, tournament_id, tournaments(name, sport, starts_at)")
+    .eq("player_id", playerId)
+    .not("place", "is", null);
+  const rows = (data as unknown as AwardRow[]) ?? [];
+  return rows
+    .map((r) => ({
+      tournament_id: r.tournament_id,
+      tournament_name: r.tournaments?.name ?? "Турнир",
+      sport: (r.tournaments?.sport ?? "padel") as Sport,
+      place: r.place,
+      date: r.tournaments?.starts_at ?? new Date().toISOString(),
+    }))
+    .sort((a, b) => a.place - b.place);
+}
+
+export async function getTournamentsPlayed(playerId: string): Promise<number> {
+  const supa = supaAnon();
+  if (!supa) return demoTournamentsPlayed[playerId] ?? 0;
+  const { count } = await supa
+    .from("tournament_players")
+    .select("*", { count: "exact", head: true })
+    .eq("player_id", playerId);
+  return count ?? 0;
 }

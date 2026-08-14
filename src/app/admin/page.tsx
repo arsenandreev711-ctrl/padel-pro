@@ -18,11 +18,11 @@ import { demoCourts } from "@/lib/demo-data";
 export const dynamic = "force-dynamic";
 
 const input =
-  "border border-line rounded-lg px-3 py-2 text-sm bg-white focus:outline-2 focus:outline-primary w-full";
-const label = "text-xs font-bold text-fg/60 uppercase tracking-wide";
-const card = "rounded-2xl border border-line bg-white p-5 flex flex-col gap-3";
+  "border border-line rounded-lg px-3 py-2 text-sm bg-cream focus:outline-2 focus:outline-green w-full";
+const label = "text-xs font-bold text-ink-soft uppercase tracking-wide";
+const card = "rounded-2xl border border-line bg-surface p-5 flex flex-col gap-3";
 const btn =
-  "bg-primary text-on-primary font-bold px-5 py-2.5 rounded-xl hover:bg-secondary transition-colors duration-200 cursor-pointer text-sm";
+  "bg-green text-white font-bold px-5 py-2.5 rounded-xl hover:bg-green-deep transition-colors duration-200 cursor-pointer text-sm";
 
 async function getCourts(): Promise<Court[]> {
   const supa = supaAnon();
@@ -45,13 +45,13 @@ export default async function AdminPage({
       <div className="max-w-sm mx-auto mt-16">
         <div className={card}>
           <h1 className="text-3xl font-bold display flex items-center gap-2">
-            <ShieldCheck className="text-primary" /> {t.nav.admin}
+            <ShieldCheck className="text-green" /> {t.nav.admin}
           </h1>
           {params.error && (
             <p className="text-danger text-sm font-semibold">Неверный пароль</p>
           )}
           {!process.env.ADMIN_PASSWORD && (
-            <p className="text-sm text-fg/60">
+            <p className="text-sm text-ink-soft">
               Установи переменную окружения <code>ADMIN_PASSWORD</code>, чтобы
               включить админку.
             </p>
@@ -82,17 +82,17 @@ export default async function AdminPage({
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-bold display flex items-center gap-2">
-          <ShieldCheck className="text-primary" /> Админ-панель
+          <ShieldCheck className="text-green" /> Админ-панель
         </h1>
         <form action={logout}>
-          <button className="text-sm text-fg/60 hover:text-danger inline-flex items-center gap-1.5 cursor-pointer transition-colors duration-200">
+          <button className="text-sm text-ink-soft hover:text-danger inline-flex items-center gap-1.5 cursor-pointer transition-colors duration-200">
             <LogOut size={15} /> Выйти
           </button>
         </form>
       </div>
 
       {!hasSupabase() && (
-        <p className="bg-accent/15 rounded-xl p-4 text-sm">
+        <p className="bg-burgundy/10 rounded-xl p-4 text-sm">
           ⚠️ Supabase не подключён — формы не будут сохранять данные. Добавь
           env-переменные NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
           и SUPABASE_SERVICE_ROLE_KEY.

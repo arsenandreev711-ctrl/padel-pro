@@ -1,4 +1,5 @@
 export type Sport = "padel" | "tennis";
+export type CourtSide = "L" | "R" | "both";
 
 export interface Court {
   id: string;
@@ -13,6 +14,24 @@ export interface Player {
   full_name: string;
   city: string;
   avatar_url: string | null;
+  side_padel?: CourtSide | null;
+  side_tennis?: CourtSide | null;
+}
+
+/** Точка истории рейтинга для графика */
+export interface RatingPoint {
+  date: string;
+  rating: number;
+  level: number;
+}
+
+/** Награда игрока за турнир (место) */
+export interface PlayerAward {
+  tournament_id: string;
+  tournament_name: string;
+  sport: Sport;
+  place: number;
+  date: string;
 }
 
 export interface Rating {

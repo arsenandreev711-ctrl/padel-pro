@@ -67,6 +67,11 @@ export async function addPlayer(formData: FormData) {
       sport,
       rating: START_RATING,
     });
+    await db.from("rating_history").insert({
+      player_id: player.id,
+      sport,
+      rating: START_RATING,
+    });
   }
   revalidatePath("/");
   revalidatePath("/rating");
@@ -144,6 +149,11 @@ export async function addMatch(formData: FormData) {
         losses: won ? 0 : 1,
       });
     }
+    await db.from("rating_history").insert({
+      player_id: p.playerId,
+      sport,
+      rating: newRating,
+    });
   }
   revalidatePath("/");
   revalidatePath("/rating");

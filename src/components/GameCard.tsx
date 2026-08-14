@@ -1,7 +1,6 @@
 import { Calendar, MapPin, Users, Banknote } from "lucide-react";
 import type { Game } from "@/lib/types";
-import type { Dict } from "@/lib/i18n";
-import type { Lang } from "@/lib/i18n";
+import type { Dict, Lang } from "@/lib/i18n";
 import { SportBadge } from "./SportBadge";
 
 export function fmtDate(iso: string, lang: Lang) {
@@ -16,58 +15,51 @@ export function fmtDate(iso: string, lang: Lang) {
 export function GameCard({ game, t, lang }: { game: Game; t: Dict; lang: Lang }) {
   const joined = game.game_players?.length ?? 0;
   const free = game.max_players - joined;
+  const accent = game.sport === "padel" ? "text-green" : "text-burgundy";
   return (
-    <div className="rounded-2xl border border-line bg-white p-5 flex flex-col gap-3 hover:shadow-lg hover:border-primary/40 transition-all duration-200">
+    <div className="lift rounded-2xl border border-line bg-surface p-5 flex flex-col gap-3.5 hover:shadow-[0_12px_30px_-12px_rgba(22,36,29,0.18)] hover:border-line">
       <div className="flex items-center justify-between">
         <SportBadge sport={game.sport} t={t} />
         <span
-          className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-            game.status === "open"
-              ? "bg-green-100 text-green-800"
-              : "bg-muted text-fg/60"
+          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+            free > 0 ? "bg-green/10 text-green" : "bg-line-soft text-ink-soft"
           }`}
         >
-          {t.statusMap[game.status]}
+          {free > 0 ? `${free} ${t.freeSlots}` : t.statusMap.full}
         </span>
       </div>
 
-      <div className="flex flex-col gap-1.5 text-sm text-fg/80">
-        <span className="flex items-center gap-2">
-          <Calendar size={15} className="text-primary" />
+      <div className="flex flex-col gap-2 text-sm text-ink-soft">
+        <span className="flex items-center gap-2.5">
+          <Calendar size={15} className={accent} />
           {fmtDate(game.starts_at, lang)}
         </span>
         {game.courts && (
-          <span className="flex items-center gap-2">
-            <MapPin size={15} className="text-primary" />
+          <span className="flex items-center gap-2.5">
+            <MapPin size={15} className={accent} />
             {game.courts.name}
-            {game.courts.address ? `, ${game.courts.address}` : ""}
           </span>
         )}
-        <span className="flex items-center gap-2">
-          <Users size={15} className="text-primary" />
+        <span className="flex items-center gap-2.5">
+          <Users size={15} className={accent} />
           {joined}/{game.max_players} {t.players}
-          {free > 0 && (
-            <span className="text-green-700 font-semibold">
-              · {free} {t.freeSlots}
-            </span>
-          )}
         </span>
         {game.price_som != null && (
-          <span className="flex items-center gap-2">
-            <Banknote size={15} className="text-primary" />
+          <span className="flex items-center gap-2.5">
+            <Banknote size={15} className={accent} />
             {game.price_som} {t.som}
           </span>
         )}
       </div>
 
-      {game.comment && <p className="text-sm text-fg/60">{game.comment}</p>}
+      {game.comment && <p className="text-sm text-ink-soft/80">{game.comment}</p>}
 
       {(game.game_players?.length ?? 0) > 0 && (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1.5 pt-1">
           {game.game_players!.map((gp) => (
             <span
               key={gp.player_id}
-              className="text-xs bg-muted rounded-full px-2.5 py-1 font-medium"
+              className="text-xs bg-cream border border-line-soft rounded-full px-2.5 py-1 font-medium text-ink-soft"
             >
               {gp.players?.full_name ?? "?"}
             </span>
