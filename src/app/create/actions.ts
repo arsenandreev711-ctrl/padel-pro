@@ -95,26 +95,32 @@ export async function createTournament(formData: FormData) {
   if (!starts_at) redirect("/create?tab=tournament&error=time");
   if (!organizer_contact) redirect("/create?tab=tournament&error=contact");
 
-  const { data: trRow, error } = await db
+  const base = {
+    name,
+    sport,
+    format,
+    starts_at: new Date(starts_at).toISOString(),
+    court_id: court_id && court_id !== "none" ? court_id : null,
+    max_players: Math.min(Math.max(max_players, 4), 64),
+    level,
+    price_som,
+    prizes,
+    description,
+    organizer_name,
+    organizer_contact,
+    status: "registration",
+  };
+  // пробуем со столбцом created_by; если его ещё нет — без него
+  let ins = await db
     .from("tournaments")
-    .insert({
-      name,
-      sport,
-      format,
-      starts_at: new Date(starts_at).toISOString(),
-      court_id: court_id && court_id !== "none" ? court_id : null,
-      max_players: Math.min(Math.max(max_players, 4), 64),
-      level,
-      price_som,
-      prizes,
-      description,
-      organizer_name,
-      organizer_contact,
-      status: "registration",
-    })
+    .insert({ ...base, created_by: me?.id ?? null })
     .select("id")
     .single();
-  if (error || !trRow) redirect("/create?tab=tournament&error=db");
+  if (ins.error) {
+    ins = await db.from("tournaments").insert(base).select("id").single();
+  }
+  const trRow = ins.data;
+  if (ins.error || !trRow) redirect("/create?tab=tournament&error=db");
 
   // организатор автоматически зарегистрирован
   if (me?.id) {

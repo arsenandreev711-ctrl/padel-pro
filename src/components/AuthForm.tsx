@@ -22,6 +22,7 @@ export function AuthForm({
   const [avatar, setAvatar] = useState<string | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [photoErr, setPhotoErr] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const initials =
@@ -35,6 +36,12 @@ export function AuthForm({
   function pickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoErr("Фото больше 5 МБ — выбери поменьше");
+      e.target.value = "";
+      return;
+    }
+    setPhotoErr(null);
     const reader = new FileReader();
     reader.onload = () => setAvatar(String(reader.result));
     reader.readAsDataURL(file);
@@ -117,7 +124,9 @@ export function AuthForm({
                 onChange={pickPhoto}
               />
             </div>
-            <span className="text-xs text-ink-soft">Фото профиля · необязательно</span>
+            <span className={`text-xs ${photoErr ? "text-burgundy" : "text-ink-soft"}`}>
+              {photoErr || "Фото профиля · необязательно · до 5 МБ"}
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

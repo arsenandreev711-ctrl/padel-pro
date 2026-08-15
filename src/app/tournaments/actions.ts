@@ -33,6 +33,26 @@ export async function joinTournament(formData: FormData) {
   redirect(`/tournaments/${id}`);
 }
 
+export async function cancelTournament(formData: FormData) {
+  const id = tid(formData);
+  const me = await currentUser();
+  if (!me) redirect("/login?tab=login");
+  const db = supaAdmin();
+  if (!db) redirect(`/tournaments/${id}`);
+
+  const { data: tr } = await db
+    .from("tournaments")
+    .select("id, created_by")
+    .eq("id", id)
+    .maybeSingle();
+  if (!tr || tr.created_by !== me.id) redirect(`/tournaments/${id}`);
+
+  await db.from("tournaments").delete().eq("id", id);
+  revalidatePath("/tournaments");
+  revalidatePath("/");
+  redirect("/tournaments");
+}
+
 export async function leaveTournament(formData: FormData) {
   const id = tid(formData);
   const me = await currentUser();

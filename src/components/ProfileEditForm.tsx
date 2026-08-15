@@ -25,6 +25,7 @@ export function ProfileEditForm({
   const [avatar, setAvatar] = useState<string | null>(initialAvatar);
   const [first, setFirst] = useState(initialFirst);
   const [last, setLast] = useState(initialLast);
+  const [photoErr, setPhotoErr] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const initials =
@@ -33,6 +34,12 @@ export function ProfileEditForm({
   function pickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoErr("Фото больше 5 МБ — выбери поменьше");
+      e.target.value = "";
+      return;
+    }
+    setPhotoErr(null);
     const reader = new FileReader();
     reader.onload = () => setAvatar(String(reader.result));
     reader.readAsDataURL(file);
@@ -63,6 +70,9 @@ export function ProfileEditForm({
           </button>
           <input ref={fileRef} type="file" name="avatar" accept="image/*" className="hidden" onChange={pickPhoto} />
         </div>
+        <span className={`text-xs ${photoErr ? "text-burgundy" : "text-ink-soft"}`}>
+          {photoErr || "Нажми на камеру, чтобы сменить фото · до 5 МБ"}
+        </span>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

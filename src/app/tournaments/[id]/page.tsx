@@ -17,7 +17,7 @@ import {
 import { getLang } from "@/lib/lang";
 import { getTournament } from "@/lib/data";
 import { currentUser } from "@/lib/auth";
-import { joinTournament, leaveTournament } from "@/app/tournaments/actions";
+import { joinTournament, leaveTournament, cancelTournament } from "@/app/tournaments/actions";
 import { fmtDate } from "@/components/GameCard";
 import { SportBadge } from "@/components/SportBadge";
 import { ShareButton } from "@/components/ShareButton";
@@ -78,6 +78,7 @@ export default async function TournamentPage({
   const joined = participants.length;
   const free = tr.max_players - joined;
   const iJoined = me ? participants.some((p) => p.player_id === me.id) : false;
+  const isOrganizer = !!me && tr.created_by === me.id;
   const accent = tr.sport === "padel" ? "text-green" : "text-burgundy";
   const shareText = `Турнир «${tr.name}» · ${fmtDate(tr.starts_at, lang)} — регистрируйся на MatePoint`;
   const cHref = tr.organizer_contact ? contactHref(tr.organizer_contact) : null;
@@ -229,6 +230,18 @@ export default async function TournamentPage({
           <span className="inline-flex items-center justify-center gap-2 bg-line-soft text-ink-soft font-semibold px-6 py-3 rounded-full">
             Мест нет
           </span>
+        )}
+
+        {isOrganizer && (
+          <form action={cancelTournament} className="text-center">
+            <input type="hidden" name="tournament_id" value={tr.id} />
+            <button
+              type="submit"
+              className="text-sm text-ink-soft/70 hover:text-burgundy transition-colors cursor-pointer"
+            >
+              Отменить турнир
+            </button>
+          </form>
         )}
       </div>
 

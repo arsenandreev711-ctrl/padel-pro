@@ -68,7 +68,13 @@ export async function register(formData: FormData) {
 
   // загрузка фото в Supabase Storage (bucket "avatars")
   const file = formData.get("avatar");
-  if (file && typeof file === "object" && "arrayBuffer" in file && (file as File).size > 0) {
+  if (
+    file &&
+    typeof file === "object" &&
+    "arrayBuffer" in file &&
+    (file as File).size > 0 &&
+    (file as File).size <= 5 * 1024 * 1024
+  ) {
     try {
       const f = file as File;
       const ext = (f.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";

@@ -96,6 +96,7 @@ export interface Tournament {
   prizes?: string | null;
   organizer_name?: string | null;
   organizer_contact?: string | null;
+  created_by?: string | null;
   courts?: Court;
   tournament_players?: { player_id: string; place: number | null; players?: Player }[];
 }
