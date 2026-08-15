@@ -37,6 +37,28 @@ export async function joinGame(formData: FormData) {
   redirect(`/games/${gameId}`);
 }
 
+export async function cancelGame(formData: FormData) {
+  const gameId = gid(formData);
+  const me = await currentUser();
+  if (!me) redirect("/login?tab=login");
+  const db = supaAdmin();
+  if (!db) redirect(`/games/${gameId}`);
+
+  const { data: g } = await db
+    .from("games")
+    .select("id, created_by")
+    .eq("id", gameId)
+    .maybeSingle();
+  if (!g) redirect("/games");
+  if (g.created_by !== me.id) redirect(`/games/${gameId}`);
+
+  await db.from("games").update({ status: "cancelled" }).eq("id", gameId);
+  revalidatePath("/games");
+  revalidatePath("/");
+  revalidatePath(`/games/${gameId}`);
+  redirect("/games");
+}
+
 export async function leaveGame(formData: FormData) {
   const gameId = gid(formData);
   const me = await currentUser();

@@ -98,7 +98,17 @@ export default async function PlayerPage({
         <AvatarBox name={player.full_name} src={player.avatar_url} />
         <div className="flex flex-col gap-3">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold display">{player.full_name}</h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-3xl sm:text-4xl font-bold display">{player.full_name}</h1>
+              {isOwner && (
+                <Link
+                  href="/profile/edit"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft border border-line rounded-full px-3 py-1 hover:border-ink-soft hover:text-ink transition-colors"
+                >
+                  Редактировать
+                </Link>
+              )}
+            </div>
             <p className="text-ink-soft flex items-center gap-1.5 mt-1">
               <MapPin size={15} /> {player.city}
             </p>

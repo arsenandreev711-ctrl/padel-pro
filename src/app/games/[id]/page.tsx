@@ -17,7 +17,7 @@ import { getLang } from "@/lib/lang";
 import { getGame } from "@/lib/data";
 import { gameTimeStatus } from "@/lib/gameStatus";
 import { currentUser } from "@/lib/auth";
-import { joinGame, leaveGame } from "@/app/games/actions";
+import { joinGame, leaveGame, cancelGame } from "@/app/games/actions";
 import { fmtDate } from "@/components/GameCard";
 import { SportBadge } from "@/components/SportBadge";
 import { ShareButton } from "@/components/ShareButton";
@@ -79,6 +79,8 @@ export default async function GamePage({
   const joined = participants.length;
   const free = game.max_players - joined;
   const iJoined = me ? participants.some((p) => p.player_id === me.id) : false;
+  const isOrganizer = !!me && game.created_by === me.id;
+  const cancelled = game.status === "cancelled";
   const ts = gameTimeStatus(game.starts_at);
   const accent = game.sport === "padel" ? "text-green" : "text-burgundy";
   const sportLabel = game.sport === "padel" ? t.padel : t.tennis;
@@ -106,7 +108,11 @@ export default async function GamePage({
       <div className="rounded-2xl border border-line bg-surface p-6 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <SportBadge sport={game.sport} t={t} />
-          {ts === "live" ? (
+          {cancelled ? (
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-burgundy/10 text-burgundy">
+              Отменена
+            </span>
+          ) : ts === "live" ? (
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-burgundy/10 text-burgundy">
               <span className="w-1.5 h-1.5 rounded-full bg-burgundy animate-pulse" /> Идёт сейчас
             </span>
@@ -215,7 +221,11 @@ export default async function GamePage({
           <p className="text-sm text-ink-soft">Пока никто не записан — будь первым!</p>
         )}
 
-        {ts === "finished" ? (
+        {cancelled ? (
+          <span className="inline-flex items-center justify-center gap-2 bg-burgundy/10 text-burgundy font-semibold px-6 py-3 rounded-full">
+            Игра отменена
+          </span>
+        ) : ts === "finished" ? (
           <span className="inline-flex items-center justify-center gap-2 bg-line-soft text-ink-soft font-semibold px-6 py-3 rounded-full">
             Игра завершена
           </span>
@@ -257,13 +267,25 @@ export default async function GamePage({
           </span>
         )}
 
-        {me && (
+        {me && !cancelled && (
           <Link
             href="/matches/new"
             className="text-sm text-ink-soft hover:text-green transition-colors text-center"
           >
             Уже сыграли? Записать результат →
           </Link>
+        )}
+
+        {isOrganizer && !cancelled && ts !== "finished" && (
+          <form action={cancelGame} className="text-center">
+            <input type="hidden" name="game_id" value={game.id} />
+            <button
+              type="submit"
+              className="text-sm text-ink-soft/70 hover:text-burgundy transition-colors cursor-pointer"
+            >
+              Отменить игру
+            </button>
+          </form>
         )}
       </div>
 

@@ -98,6 +98,7 @@ export default async function RootLayout({
               <a href="/matches" className="hover:text-ink transition-colors">{t.nav.matches}</a>
               <a href="/tournaments" className="hover:text-ink transition-colors">{t.nav.tournaments}</a>
               <a href="/courts" className="hover:text-ink transition-colors">{t.nav.courts}</a>
+              <a href="/privacy" className="hover:text-ink transition-colors">Конфиденциальность</a>
             </nav>
             <div className="flex flex-wrap gap-4 items-center justify-between text-sm text-ink-soft border-t border-line-soft pt-5">
               <span className="flex items-center gap-2">

@@ -155,6 +155,13 @@ export function AuthForm({
           >
             <UserPlus size={17} /> Создать аккаунт
           </button>
+          <p className="text-[11px] text-ink-soft text-center -mt-1">
+            Регистрируясь, ты принимаешь{" "}
+            <a href="/privacy" className="text-green underline">
+              политику конфиденциальности
+            </a>
+            .
+          </p>
         </form>
       )}
     </div>

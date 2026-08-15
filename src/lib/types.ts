@@ -76,6 +76,7 @@ export interface Game {
   court_booked?: boolean | null;
   organizer_name?: string | null;
   organizer_contact?: string | null;
+  created_by?: string | null;
   courts?: Court;
   game_players?: { player_id: string; players?: Player }[];
 }
