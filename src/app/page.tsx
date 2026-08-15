@@ -1,22 +1,35 @@
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Plus } from "lucide-react";
 import { getLang } from "@/lib/lang";
-import { getRatings, getGames, getTournaments } from "@/lib/data";
+import {
+  getRatings,
+  getGames,
+  getTournaments,
+  getRecentMatches,
+  getPlayersMap,
+} from "@/lib/data";
 import { RatingTable } from "@/components/RatingTable";
-import { GameCard } from "@/components/GameCard";
+import { GameCard, fmtDate } from "@/components/GameCard";
 import { TournamentCard } from "@/components/TournamentCard";
+import { SportBadge } from "@/components/SportBadge";
 import { Reveal } from "@/components/Reveal";
 
-export const revalidate = 60;
+export const revalidate = 30;
 
 export default async function Home() {
   const { lang, t } = await getLang();
-  const [padel, tennis, games, tournaments] = await Promise.all([
+  const [padel, tennis, games, tournaments, recentMatches] = await Promise.all([
     getRatings("padel", 5),
     getRatings("tennis", 5),
     getGames(),
     getTournaments(),
+    getRecentMatches(5),
   ]);
+  const matchIds = [
+    ...new Set(recentMatches.flatMap((m) => [...m.team1, ...m.team2])),
+  ];
+  const matchNames = await getPlayersMap(matchIds);
+  const pname = (pid: string) => matchNames[pid]?.full_name ?? "Игрок";
 
   return (
     <div className="flex flex-col gap-20 sm:gap-28">
@@ -165,6 +178,49 @@ export default async function Home() {
           </div>
         )}
       </section>
+
+      {/* Последние матчи */}
+      {recentMatches.length > 0 && (
+        <section className="flex flex-col gap-6">
+          <Reveal className="flex items-end justify-between">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-3xl sm:text-4xl font-bold display">{t.recentMatches}</h2>
+              <p className="text-ink-soft">Результаты игр сообщества</p>
+            </div>
+            <Link
+              href="/matches"
+              className="text-ink-soft font-medium text-sm inline-flex items-center gap-1 hover:text-ink transition-colors duration-200 cursor-pointer shrink-0"
+            >
+              {t.all} <ArrowUpRight size={15} />
+            </Link>
+          </Reveal>
+          <div className="flex flex-col gap-3">
+            {recentMatches.map((m, i) => {
+              const t1won = m.winner === 1;
+              return (
+                <Reveal key={m.id} delay={i * 60}>
+                  <div className="rounded-2xl border border-line bg-surface p-4 flex flex-wrap items-center gap-x-4 gap-y-2 justify-between">
+                    <div className="flex items-center gap-3">
+                      <SportBadge sport={m.sport} t={t} />
+                      <span className="text-sm text-ink-soft">{fmtDate(m.played_at, lang)}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm font-medium">
+                      <span className={t1won ? "text-green font-semibold" : "text-ink-soft"}>
+                        {m.team1.map(pname).join(" / ")}
+                      </span>
+                      <span className="text-ink-soft/50">{t.vs}</span>
+                      <span className={!t1won ? "text-green font-semibold" : "text-ink-soft"}>
+                        {m.team2.map(pname).join(" / ")}
+                      </span>
+                    </div>
+                    <span className="font-bold display text-lg tabular-nums">{m.score}</span>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
