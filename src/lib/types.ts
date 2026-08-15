@@ -14,6 +14,7 @@ export interface Player {
   full_name: string;
   city: string;
   phone?: string | null;
+  phone_verified?: boolean | null;
   avatar_url: string | null;
   side_padel?: CourtSide | null;
   side_tennis?: CourtSide | null;

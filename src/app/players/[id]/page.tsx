@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Trophy, Swords, Medal, Gauge } from "lucide-react";
+import { MapPin, Trophy, Swords, Medal, Gauge, BadgeCheck, Send } from "lucide-react";
 import { getLang } from "@/lib/lang";
 import { currentUser } from "@/lib/auth";
+import { startTelegramVerify } from "@/app/players/actions";
 import {
   getPlayer,
   getPlayerRatings,
@@ -100,6 +101,14 @@ export default async function PlayerPage({
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-3xl sm:text-4xl font-bold display">{player.full_name}</h1>
+              {player.phone_verified && (
+                <span
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-green bg-green/10 rounded-full px-2.5 py-1"
+                  title="Номер подтверждён через Telegram"
+                >
+                  <BadgeCheck size={14} /> Номер подтверждён
+                </span>
+              )}
               {isOwner && (
                 <Link
                   href="/profile/edit"
@@ -109,6 +118,16 @@ export default async function PlayerPage({
                 </Link>
               )}
             </div>
+            {isOwner && !player.phone_verified && (
+              <form action={startTelegramVerify}>
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-green border border-green/30 bg-green/5 rounded-full px-3 py-1.5 hover:bg-green/10 transition-colors cursor-pointer"
+                >
+                  <Send size={14} /> Подтвердить номер через Telegram
+                </button>
+              </form>
+            )}
             <p className="text-ink-soft flex items-center gap-1.5 mt-1">
               <MapPin size={15} /> {player.city}
             </p>

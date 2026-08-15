@@ -1,11 +1,24 @@
 "use server";
 
+import crypto from "crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { supaAdmin } from "@/lib/supabase/server";
 import { currentUser, normalizePhone } from "@/lib/auth";
 import { levelToElo } from "@/lib/grading";
 import type { Sport } from "@/lib/types";
+
+/** Начать подтверждение номера через Telegram: создаёт токен и ведёт на /verify. */
+export async function startTelegramVerify() {
+  const me = await currentUser();
+  if (!me) redirect("/login?tab=login");
+  if (!me.phone) redirect("/profile/edit");
+  const db = supaAdmin();
+  if (!db) redirect(`/players/${me.id}`);
+  const token = crypto.randomUUID().replace(/-/g, "");
+  await db.from("tg_verify").insert({ token, phone: me.phone });
+  redirect(`/verify?token=${token}`);
+}
 
 /** Редактирование своего профиля: имя, фамилия, телефон, город, фото. */
 export async function updateProfile(formData: FormData) {
