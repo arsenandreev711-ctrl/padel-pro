@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Rally — падел и теннис Кыргызстана",
-    short_name: "Rally",
+    name: "MatePoint — падел и теннис Кыргызстана",
+    short_name: "MatePoint",
     description:
       "Рейтинг, открытые игры и турниры по паделу и теннису в Кыргызстане. Создавай игры и находи партнёров.",
     start_url: "/",

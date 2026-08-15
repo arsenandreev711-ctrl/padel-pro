@@ -2,7 +2,7 @@ export type Lang = "ru" | "ky";
 
 export const dict = {
   ru: {
-    siteName: "Rally",
+    siteName: "MatePoint",
     tagline: "Рейтинг падела и тенниса в Кыргызстане",
     kicker: "Падел × Теннис · Кыргызстан",
     heroTitle: "Одна культура спорта.",
@@ -59,7 +59,7 @@ export const dict = {
     profileMatches: "История матчей",
     score: "Счёт",
     vs: "против",
-    footer: "Rally — рейтинг падела и тенниса в Кыргызстане",
+    footer: "MatePoint — рейтинг падела и тенниса в Кыргызстане",
     all: "Все",
     yourName: "Твоё имя",
     phone: "Телефон",
@@ -107,7 +107,7 @@ export const dict = {
     },
   },
   ky: {
-    siteName: "Rally",
+    siteName: "MatePoint",
     tagline: "Кыргызстандагы падел жана теннис рейтинги",
     kicker: "Падел × Теннис · Кыргызстан",
     heroTitle: "Спорттун бир маданияты.",
@@ -164,7 +164,7 @@ export const dict = {
     profileMatches: "Матчтардын тарыхы",
     score: "Эсеп",
     vs: "каршы",
-    footer: "Rally — Кыргызстандагы падел жана теннис рейтинги",
+    footer: "MatePoint — Кыргызстандагы падел жана теннис рейтинги",
     all: "Баары",
     yourName: "Атың",
     phone: "Телефон",

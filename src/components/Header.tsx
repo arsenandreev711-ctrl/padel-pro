@@ -51,7 +51,7 @@ export function Header({ lang, user }: { lang: Lang; user: HeaderUser }) {
         <Link href="/" className="flex items-center gap-2.5 group">
           <Emblem size={34} className="transition-transform duration-300 group-hover:rotate-[8deg]" />
           <span className="display text-xl font-bold tracking-tight">
-Ra<span className="text-green">l</span>ly
+Mate<span className="text-green">Point</span>
           </span>
         </Link>
 
