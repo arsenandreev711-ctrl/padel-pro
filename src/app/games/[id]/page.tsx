@@ -41,7 +41,8 @@ export async function generateMetadata({
     minute: "2-digit",
   });
   const title = `${sport} · ${when}${game.courts ? " · " + game.courts.name : ""} — Padel-PRO`;
-  const desc = `Открытая игра${game.level ? ", уровень " + game.level : ""} · до ${game.max_players} игроков${
+  const lvl = game.level && game.level !== "Любой уровень" ? ", уровень " + game.level : "";
+  const desc = `Открытая игра${lvl} · до ${game.max_players} игроков${
     game.price_som != null ? " · " + game.price_som + " сом" : ""
   }. Присоединяйся!`;
   return {

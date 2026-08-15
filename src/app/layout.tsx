@@ -88,11 +88,21 @@ export default async function RootLayout({
           {children}
         </main>
         <footer className="border-t border-line pb-20 md:pb-0">
-          <div className="max-w-6xl mx-auto px-5 py-8 flex flex-wrap gap-4 items-center justify-between text-sm text-ink-soft">
-            <span className="flex items-center gap-2">
-              <Emblem size={22} /> © {new Date().getFullYear()} {t.footer}
-            </span>
-            <span>Бишкек · Кыргызстан</span>
+          <div className="max-w-6xl mx-auto px-5 py-8 flex flex-col gap-5">
+            <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-soft">
+              <a href="/how" className="hover:text-ink transition-colors">Как это работает</a>
+              <a href="/rating" className="hover:text-ink transition-colors">{t.nav.rating}</a>
+              <a href="/games" className="hover:text-ink transition-colors">{t.nav.games}</a>
+              <a href="/matches" className="hover:text-ink transition-colors">{t.nav.matches}</a>
+              <a href="/tournaments" className="hover:text-ink transition-colors">{t.nav.tournaments}</a>
+              <a href="/courts" className="hover:text-ink transition-colors">{t.nav.courts}</a>
+            </nav>
+            <div className="flex flex-wrap gap-4 items-center justify-between text-sm text-ink-soft border-t border-line-soft pt-5">
+              <span className="flex items-center gap-2">
+                <Emblem size={22} /> © {new Date().getFullYear()} {t.footer}
+              </span>
+              <span>Бишкек · Кыргызстан</span>
+            </div>
           </div>
         </footer>
         <InstallPrompt />
