@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Calendar, MapPin, Users, Banknote, Gauge, Phone, BadgeCheck } from "lucide-react";
 import type { Game } from "@/lib/types";
 import type { Dict, Lang } from "@/lib/i18n";
@@ -17,7 +18,10 @@ export function GameCard({ game, t, lang }: { game: Game; t: Dict; lang: Lang })
   const free = game.max_players - joined;
   const accent = game.sport === "padel" ? "text-green" : "text-burgundy";
   return (
-    <div className="lift rounded-2xl border border-line bg-surface p-5 flex flex-col gap-3.5 hover:shadow-[0_12px_30px_-12px_rgba(22,36,29,0.18)] hover:border-line">
+    <Link
+      href={`/games/${game.id}`}
+      className="lift block rounded-2xl border border-line bg-surface p-5 flex flex-col gap-3.5 hover:shadow-[0_12px_30px_-12px_rgba(22,36,29,0.18)] hover:border-line cursor-pointer"
+    >
       <div className="flex items-center justify-between">
         <SportBadge sport={game.sport} t={t} />
         <span
@@ -85,6 +89,6 @@ export function GameCard({ game, t, lang }: { game: Game; t: Dict; lang: Lang })
           ))}
         </div>
       )}
-    </div>
+    </Link>
   );
 }

@@ -88,6 +88,17 @@ export async function getGames(): Promise<Game[]> {
   return (data as Game[]) ?? [];
 }
 
+export async function getGame(id: string): Promise<Game | null> {
+  const supa = supaAnon();
+  if (!supa) return demoGames.find((g) => g.id === id) ?? null;
+  const { data } = await supa
+    .from("games")
+    .select("*, courts(*), game_players(player_id, players(*))")
+    .eq("id", id)
+    .maybeSingle();
+  return (data as Game) ?? null;
+}
+
 export async function getTournaments(): Promise<Tournament[]> {
   const supa = supaAnon();
   if (!supa) return demoTournaments;

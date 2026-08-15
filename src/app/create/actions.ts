@@ -45,24 +45,28 @@ export async function createGame(formData: FormData) {
   if (!starts_at) redirect("/create?tab=game&error=time");
   if (!organizer_contact) redirect("/create?tab=game&error=contact");
 
-  const { error } = await db.from("games").insert({
-    sport,
-    starts_at: new Date(starts_at).toISOString(),
-    court_id: court_id && court_id !== "none" ? court_id : null,
-    max_players: Math.min(Math.max(max_players, 2), 8),
-    level,
-    court_booked,
-    price_som,
-    comment,
-    organizer_name,
-    organizer_contact,
-    created_by: me?.id ?? null,
-  });
-  if (error) redirect("/create?tab=game&error=db&msg=" + encodeURIComponent(error.message || String(error)));
+  const { data: gameRow, error } = await db
+    .from("games")
+    .insert({
+      sport,
+      starts_at: new Date(starts_at).toISOString(),
+      court_id: court_id && court_id !== "none" ? court_id : null,
+      max_players: Math.min(Math.max(max_players, 2), 8),
+      level,
+      court_booked,
+      price_som,
+      comment,
+      organizer_name,
+      organizer_contact,
+      created_by: me?.id ?? null,
+    })
+    .select("id")
+    .single();
+  if (error || !gameRow) redirect("/create?tab=game&error=db");
 
   revalidatePath("/");
   revalidatePath("/games");
-  redirect("/games?created=1");
+  redirect(`/games/${gameRow.id}?created=1`);
 }
 
 // ——— Публичное создание турнира ———
