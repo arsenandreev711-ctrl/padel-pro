@@ -42,15 +42,19 @@ export function CreateForm({
   initialTab = "game",
   meName = "",
   meContact = "",
+  defaultSport = "padel",
+  defaultCourt = "none",
 }: {
   courts: Court[];
   t: Dict;
   initialTab?: Tab;
   meName?: string;
   meContact?: string;
+  defaultSport?: SportT;
+  defaultCourt?: string;
 }) {
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [sport, setSport] = useState<SportT>("padel");
+  const [sport, setSport] = useState<SportT>(defaultSport);
 
   const c = t.create;
   const filteredCourts = courts.filter((ct) => ct.sports.includes(sport));
@@ -106,7 +110,7 @@ export function CreateForm({
 
   const CourtSelect = (
     <Field label={c.court} t={t} optional>
-      <select name="court_id" className={inputCls} defaultValue="none">
+      <select name="court_id" className={inputCls} defaultValue={defaultCourt}>
         <option value="none">{c.noCourt}</option>
         {filteredCourts.map((ct) => (
           <option key={ct.id} value={ct.id}>

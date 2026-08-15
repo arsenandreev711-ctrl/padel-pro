@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Plus } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Plus, Users, CalendarDays, Swords, Trophy } from "lucide-react";
 import { getLang } from "@/lib/lang";
 import {
   getRatings,
@@ -7,6 +7,7 @@ import {
   getTournaments,
   getRecentMatches,
   getPlayersMap,
+  getCounts,
 } from "@/lib/data";
 import { RatingTable } from "@/components/RatingTable";
 import { GameCard, fmtDate } from "@/components/GameCard";
@@ -18,13 +19,20 @@ export const revalidate = 30;
 
 export default async function Home() {
   const { lang, t } = await getLang();
-  const [padel, tennis, games, tournaments, recentMatches] = await Promise.all([
+  const [padel, tennis, games, tournaments, recentMatches, counts] = await Promise.all([
     getRatings("padel", 5),
     getRatings("tennis", 5),
     getGames(),
     getTournaments(),
     getRecentMatches(5),
+    getCounts(),
   ]);
+  const stats = [
+    { icon: Users, value: counts.players, label: "Игроков" },
+    { icon: CalendarDays, value: counts.games, label: "Открытых игр" },
+    { icon: Swords, value: counts.matches, label: "Матчей" },
+    { icon: Trophy, value: counts.tournaments, label: "Турниров" },
+  ];
   const matchIds = [
     ...new Set(recentMatches.flatMap((m) => [...m.team1, ...m.team2])),
   ];
@@ -99,6 +107,22 @@ export default async function Home() {
             <span className="w-2 h-2 rounded-full bg-[#c86b86] ml-3" /> {t.tennis}
           </div>
         </div>
+      </Reveal>
+
+      {/* Живые счётчики */}
+      <Reveal className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 -mt-6 sm:-mt-10">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="rounded-2xl border border-line bg-surface p-4 sm:p-5 flex flex-col gap-1"
+          >
+            <s.icon size={18} className="text-green" />
+            <span className="text-2xl sm:text-3xl font-extrabold display tabular-nums leading-none mt-1">
+              {s.value}
+            </span>
+            <span className="text-xs sm:text-sm text-ink-soft">{s.label}</span>
+          </div>
+        ))}
       </Reveal>
 
       {/* Топ рейтинги */}

@@ -8,11 +8,19 @@ export const dynamic = "force-dynamic";
 export default async function CreatePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; error?: string }>;
+  searchParams: Promise<{ tab?: string; error?: string; court?: string }>;
 }) {
   const { t } = await getLang();
   const [courts, me, params] = await Promise.all([getCourts(), currentUser(), searchParams]);
   const tab = params.tab === "tournament" ? "tournament" : "game";
+
+  const presetCourt = params.court && courts.find((c) => c.id === params.court);
+  const defaultCourt = presetCourt ? presetCourt.id : "none";
+  const defaultSport: "padel" | "tennis" = presetCourt
+    ? presetCourt.sports.includes("padel")
+      ? "padel"
+      : "tennis"
+    : "padel";
 
   const errMap: Record<string, string> = {
     name: t.create.errName,
@@ -39,6 +47,8 @@ export default async function CreatePage({
         initialTab={tab}
         meName={me?.full_name ?? ""}
         meContact={me?.phone ?? ""}
+        defaultSport={defaultSport}
+        defaultCourt={defaultCourt}
       />
     </div>
   );

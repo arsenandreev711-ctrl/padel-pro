@@ -169,6 +169,37 @@ export async function getCourts(): Promise<Court[]> {
   return (data as Court[]) ?? [];
 }
 
+export async function getCounts(): Promise<{
+  players: number;
+  games: number;
+  matches: number;
+  tournaments: number;
+}> {
+  const supa = supaAnon();
+  if (!supa)
+    return {
+      players: demoPlayers.length,
+      games: demoGames.length,
+      matches: demoMatches.length,
+      tournaments: demoTournaments.length,
+    };
+  const [p, g, m, tr] = await Promise.all([
+    supa.from("players").select("*", { count: "exact", head: true }),
+    supa
+      .from("games")
+      .select("*", { count: "exact", head: true })
+      .in("status", ["open", "full"]),
+    supa.from("matches").select("*", { count: "exact", head: true }),
+    supa.from("tournaments").select("*", { count: "exact", head: true }),
+  ]);
+  return {
+    players: p.count ?? 0,
+    games: g.count ?? 0,
+    matches: m.count ?? 0,
+    tournaments: tr.count ?? 0,
+  };
+}
+
 export async function getAllPlayers(): Promise<Player[]> {
   const supa = supaAnon();
   if (!supa) return demoPlayers;
