@@ -137,7 +137,7 @@ export function AuthForm({
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Арсений"
+                placeholder="Азамат"
                 className={inputCls}
               />
             </label>
@@ -147,7 +147,7 @@ export function AuthForm({
                 name="last_name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Андреев"
+                placeholder="Исаков"
                 className={inputCls}
               />
             </label>

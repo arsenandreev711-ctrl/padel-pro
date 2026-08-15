@@ -4,7 +4,7 @@ const days = (n: number) => new Date(Date.now() + n * 864e5).toISOString();
 
 // Демо-данные, пока Supabase не подключён
 export const demoPlayers: Player[] = [
-  { id: "p1", full_name: "Арсений Андреев", city: "Бишкек", avatar_url: null, side_padel: "R", side_tennis: "R" },
+  { id: "p1", full_name: "Азамат Исаков", city: "Бишкек", avatar_url: null, side_padel: "R", side_tennis: "R" },
   { id: "p2", full_name: "Бакыт Осмонов", city: "Бишкек", avatar_url: null, side_padel: "L", side_tennis: "both" },
   { id: "p3", full_name: "Айгерим Токтогулова", city: "Бишкек", avatar_url: null, side_padel: "R", side_tennis: null },
   { id: "p4", full_name: "Данияр Мамытов", city: "Бишкек", avatar_url: null, side_padel: "L", side_tennis: null },

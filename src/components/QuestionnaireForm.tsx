@@ -244,7 +244,7 @@ export function QuestionnaireForm({
                 onChange={(e) => setName(e.target.value)}
                 required
                 className="border border-line rounded-lg px-3 py-2 text-sm bg-cream focus:outline-2 focus:outline-green"
-                placeholder="Арсений Андреев"
+                placeholder="Азамат Исаков"
               />
             </label>
             <label className="flex flex-col gap-1.5">
