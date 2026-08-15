@@ -61,8 +61,8 @@ export async function getPlayerMatches(id: string): Promise<Match[]> {
     .select("*")
     .or(`team1.cs.{${id}},team2.cs.{${id}}`)
     .order("played_at", { ascending: false })
-    .limit(50);
-  return (data as Match[]) ?? [];
+    .limit(60);
+  return ((data as Match[]) ?? []).filter((m) => m.status !== "pending").slice(0, 50);
 }
 
 export async function getRecentMatches(limit = 10): Promise<Match[]> {
@@ -72,8 +72,21 @@ export async function getRecentMatches(limit = 10): Promise<Match[]> {
     .from("matches")
     .select("*")
     .order("played_at", { ascending: false })
-    .limit(limit);
-  return (data as Match[]) ?? [];
+    .limit(limit * 3);
+  return ((data as Match[]) ?? []).filter((m) => m.status !== "pending").slice(0, limit);
+}
+
+/** Матчи, ожидающие подтверждения, где участвует игрок. */
+export async function getPendingMatchesFor(playerId: string): Promise<Match[]> {
+  const supa = supaAnon();
+  if (!supa) return [];
+  const { data } = await supa
+    .from("matches")
+    .select("*")
+    .or(`team1.cs.{${playerId}},team2.cs.{${playerId}}`)
+    .order("played_at", { ascending: false })
+    .limit(30);
+  return ((data as Match[]) ?? []).filter((m) => m.status === "pending");
 }
 
 export async function getGames(): Promise<Game[]> {

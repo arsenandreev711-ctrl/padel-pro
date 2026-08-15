@@ -57,6 +57,8 @@ export interface Match {
   winner: 1 | 2;
   rating_deltas: Record<string, number>;
   tournament_id: string | null;
+  status?: string | null;
+  created_by?: string | null;
 }
 
 export interface Game {

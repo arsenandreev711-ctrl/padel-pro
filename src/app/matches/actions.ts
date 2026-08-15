@@ -7,6 +7,7 @@ import { currentUser } from "@/lib/auth";
 import { calcDeltas, START_RATING } from "@/lib/elo";
 import type { Sport } from "@/lib/types";
 
+/** Игрок записывает матч → статус «ожидает подтверждения» соперника. Elo пока не меняется. */
 export async function recordMatch(formData: FormData) {
   const me = await currentUser();
   if (!me) redirect("/login?tab=login");
@@ -23,12 +24,53 @@ export async function recordMatch(formData: FormData) {
     .map(String)
     .filter((x) => x && x !== "none");
 
-  // без дублей между командами
   const overlap = team1.some((x) => team2.includes(x));
+  const all = [...team1, ...team2];
   if (team1.length === 0 || team2.length === 0 || !score || overlap)
     redirect("/matches/new?error=1");
+  // записывающий должен сам играть в матче
+  if (!all.includes(me.id)) redirect("/matches/new?error=self");
 
-  const ids = [...new Set([...team1, ...team2])];
+  const { error } = await db.from("matches").insert({
+    sport,
+    score,
+    team1,
+    team2,
+    winner,
+    rating_deltas: {},
+    status: "pending",
+    created_by: me.id,
+  });
+  if (error) redirect("/matches/new?error=1");
+
+  revalidatePath("/matches");
+  redirect("/matches?pending=1");
+}
+
+/** Соперник подтверждает матч → пересчёт Elo по актуальным рейтингам. */
+export async function confirmMatch(formData: FormData) {
+  const me = await currentUser();
+  if (!me) redirect("/login?tab=login");
+  const db = supaAdmin();
+  if (!db) redirect("/matches?error=db");
+  const matchId = String(formData.get("match_id") || "");
+
+  const { data: m } = await db
+    .from("matches")
+    .select("*")
+    .eq("id", matchId)
+    .maybeSingle();
+  if (!m || m.status !== "pending") redirect("/matches");
+
+  const team1: string[] = m.team1 ?? [];
+  const team2: string[] = m.team2 ?? [];
+  const all = [...team1, ...team2];
+  // подтвердить может участник матча, но не тот, кто его записал
+  if (!all.includes(me.id) || m.created_by === me.id) redirect("/matches?error=perm");
+
+  const sport = m.sport as Sport;
+  const winner = (m.winner === 2 ? 2 : 1) as 1 | 2;
+  const ids = [...new Set(all)];
   const { data: ratings } = await db
     .from("ratings")
     .select("*")
@@ -46,17 +88,12 @@ export async function recordMatch(formData: FormData) {
   };
   const T1 = team1.map(getR);
   const T2 = team2.map(getR);
-  const deltas = calcDeltas(T1, T2, winner as 1 | 2);
+  const deltas = calcDeltas(T1, T2, winner);
 
-  const { error } = await db.from("matches").insert({
-    sport,
-    score,
-    team1,
-    team2,
-    winner,
-    rating_deltas: deltas,
-  });
-  if (error) redirect("/matches/new?error=1");
+  await db
+    .from("matches")
+    .update({ rating_deltas: deltas, status: "confirmed" })
+    .eq("id", matchId);
 
   for (const p of [...T1, ...T2]) {
     const isT1 = team1.includes(p.playerId);
@@ -92,5 +129,27 @@ export async function recordMatch(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/rating");
   revalidatePath("/matches");
-  redirect("/matches?recorded=1");
+  redirect("/matches?confirmed=1");
+}
+
+/** Участник отклоняет неверный матч → запись удаляется. */
+export async function rejectMatch(formData: FormData) {
+  const me = await currentUser();
+  if (!me) redirect("/login?tab=login");
+  const db = supaAdmin();
+  if (!db) redirect("/matches?error=db");
+  const matchId = String(formData.get("match_id") || "");
+
+  const { data: m } = await db
+    .from("matches")
+    .select("id, team1, team2, status")
+    .eq("id", matchId)
+    .maybeSingle();
+  if (!m || m.status !== "pending") redirect("/matches");
+  const all = [...(m.team1 ?? []), ...(m.team2 ?? [])];
+  if (!all.includes(me.id)) redirect("/matches?error=perm");
+
+  await db.from("matches").delete().eq("id", matchId);
+  revalidatePath("/matches");
+  redirect("/matches?rejected=1");
 }

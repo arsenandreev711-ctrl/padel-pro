@@ -138,7 +138,8 @@ export function MatchForm({ players, meId }: { players: P[]; meId: string }) {
         <Swords size={18} /> Записать результат
       </button>
       <p className="text-xs text-ink-soft -mt-2">
-        Рейтинг Elo всех участников пересчитается автоматически.
+        Результат отправится сопернику на подтверждение. После подтверждения рейтинг
+        Elo всех участников пересчитается автоматически.
       </p>
     </form>
   );
