@@ -109,6 +109,46 @@ export async function getTournaments(): Promise<Tournament[]> {
   return (data as Tournament[]) ?? [];
 }
 
+export async function getTournament(id: string): Promise<Tournament | null> {
+  const supa = supaAnon();
+  if (!supa) return demoTournaments.find((tr) => tr.id === id) ?? null;
+  const { data } = await supa
+    .from("tournaments")
+    .select("*, courts(*), tournament_players(player_id, place, players(*))")
+    .eq("id", id)
+    .maybeSingle();
+  return (data as Tournament) ?? null;
+}
+
+export async function getPlayerGames(playerId: string): Promise<Game[]> {
+  const supa = supaAnon();
+  if (!supa) return [];
+  const { data } = await supa
+    .from("game_players")
+    .select("games(*, courts(*), game_players(player_id, players(*)))")
+    .eq("player_id", playerId);
+  const rows = (data as unknown as { games: Game | null }[]) ?? [];
+  const now = Date.now() - 864e5;
+  return rows
+    .map((r) => r.games)
+    .filter((g): g is Game => !!g && new Date(g.starts_at).getTime() >= now)
+    .sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+}
+
+export async function getPlayerUpcomingTournaments(playerId: string): Promise<Tournament[]> {
+  const supa = supaAnon();
+  if (!supa) return [];
+  const { data } = await supa
+    .from("tournament_players")
+    .select("tournaments(*, courts(*), tournament_players(player_id))")
+    .eq("player_id", playerId);
+  const rows = (data as unknown as { tournaments: Tournament | null }[]) ?? [];
+  return rows
+    .map((r) => r.tournaments)
+    .filter((tr): tr is Tournament => !!tr && tr.status !== "finished")
+    .sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+}
+
 export async function getCourts(): Promise<Court[]> {
   const supa = supaAnon();
   if (!supa) return demoCourts;

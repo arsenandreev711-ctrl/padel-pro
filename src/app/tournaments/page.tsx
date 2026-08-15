@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getLang } from "@/lib/lang";
 import { getTournaments } from "@/lib/data";
 import { TournamentCard } from "@/components/TournamentCard";
+import { FilterBar } from "@/components/FilterBar";
 import { Reveal } from "@/components/Reveal";
 
 export const dynamic = "force-dynamic";
@@ -10,10 +12,14 @@ export const dynamic = "force-dynamic";
 export default async function TournamentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string }>;
+  searchParams: Promise<{ created?: string; sport?: string }>;
 }) {
   const { lang, t } = await getLang();
   const [tournaments, params] = await Promise.all([getTournaments(), searchParams]);
+
+  let list = tournaments;
+  if (params.sport === "padel" || params.sport === "tennis")
+    list = list.filter((tr) => tr.sport === params.sport);
 
   return (
     <div className="flex flex-col gap-7">
@@ -34,11 +40,17 @@ export default async function TournamentsPage({
         <p className="bg-green/10 text-green rounded-xl p-4 text-sm">{t.createdBanner}</p>
       )}
 
-      {tournaments.length === 0 ? (
-        <p className="text-ink-soft py-8">{t.noData}</p>
+      <Suspense>
+        <FilterBar levels={t.create.levels} showLevel={false} />
+      </Suspense>
+
+      {list.length === 0 ? (
+        <p className="text-ink-soft py-8">
+          {tournaments.length === 0 ? t.noData : "Нет турниров по этому фильтру."}
+        </p>
       ) : (
         <div className="grid sm:grid-cols-2 gap-5">
-          {tournaments.map((tr, i) => (
+          {list.map((tr, i) => (
             <Reveal key={tr.id} delay={i * 60}>
               <TournamentCard tournament={tr} t={t} lang={lang} />
             </Reveal>

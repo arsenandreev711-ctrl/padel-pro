@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Calendar, MapPin, Users, Banknote, Gauge, Phone, Gift } from "lucide-react";
 import type { Tournament } from "@/lib/types";
 import type { Dict, Lang } from "@/lib/i18n";
@@ -16,7 +17,10 @@ export function TournamentCard({
   const joined = tr.tournament_players?.length ?? 0;
   const accent = tr.sport === "padel" ? "text-green" : "text-burgundy";
   return (
-    <div className="lift rounded-2xl border border-line bg-surface p-6 flex flex-col gap-3.5 hover:shadow-[0_16px_40px_-16px_rgba(22,36,29,0.2)]">
+    <Link
+      href={`/tournaments/${tr.id}`}
+      className="lift block rounded-2xl border border-line bg-surface p-6 flex flex-col gap-3.5 hover:shadow-[0_16px_40px_-16px_rgba(22,36,29,0.2)] cursor-pointer"
+    >
       <div className="flex items-center justify-between gap-2">
         <SportBadge sport={tr.sport} t={t} />
         <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-cream border border-line-soft text-ink-soft">
@@ -78,6 +82,6 @@ export function TournamentCard({
       {tr.description && (
         <p className="text-sm text-ink-soft/80">{tr.description}</p>
       )}
-    </div>
+    </Link>
   );
 }

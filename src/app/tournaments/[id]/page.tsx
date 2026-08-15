@@ -6,17 +6,18 @@ import {
   Users,
   Banknote,
   Gauge,
-  BadgeCheck,
+  Gift,
   ArrowLeft,
   MessageSquare,
   UserPlus,
   LogOut,
   Check,
+  Trophy,
 } from "lucide-react";
 import { getLang } from "@/lib/lang";
-import { getGame } from "@/lib/data";
+import { getTournament } from "@/lib/data";
 import { currentUser } from "@/lib/auth";
-import { joinGame, leaveGame } from "@/app/games/actions";
+import { joinTournament, leaveTournament } from "@/app/tournaments/actions";
 import { fmtDate } from "@/components/GameCard";
 import { SportBadge } from "@/components/SportBadge";
 import { ShareButton } from "@/components/ShareButton";
@@ -32,7 +33,7 @@ function contactHref(contact: string): string | null {
   return null;
 }
 
-export default async function GamePage({
+export default async function TournamentPage({
   params,
   searchParams,
 }: {
@@ -42,99 +43,89 @@ export default async function GamePage({
   const { lang, t } = await getLang();
   const { id } = await params;
   const { created } = await searchParams;
-  const [game, me] = await Promise.all([getGame(id), currentUser()]);
-  if (!game) notFound();
+  const [tr, me] = await Promise.all([getTournament(id), currentUser()]);
+  if (!tr) notFound();
 
-  const participants = game.game_players ?? [];
+  const participants = tr.tournament_players ?? [];
   const joined = participants.length;
-  const free = game.max_players - joined;
+  const free = tr.max_players - joined;
   const iJoined = me ? participants.some((p) => p.player_id === me.id) : false;
-  const accent = game.sport === "padel" ? "text-green" : "text-burgundy";
-  const sportLabel = game.sport === "padel" ? t.padel : t.tennis;
-  const shareText = `${sportLabel} · ${fmtDate(game.starts_at, lang)}${
-    game.courts ? " · " + game.courts.name : ""
-  } — присоединяйся на Padel-PRO`;
-
-  const cHref = game.organizer_contact ? contactHref(game.organizer_contact) : null;
+  const accent = tr.sport === "padel" ? "text-green" : "text-burgundy";
+  const shareText = `Турнир «${tr.name}» · ${fmtDate(tr.starts_at, lang)} — регистрируйся на Padel-PRO`;
+  const cHref = tr.organizer_contact ? contactHref(tr.organizer_contact) : null;
 
   return (
     <div className="flex flex-col gap-6 max-w-xl">
       <Link
-        href="/games"
+        href="/tournaments"
         className="inline-flex items-center gap-1.5 text-sm text-ink-soft hover:text-ink transition-colors w-fit"
       >
-        <ArrowLeft size={15} /> Все игры
+        <ArrowLeft size={15} /> Все турниры
       </Link>
 
       {created && (
         <p className="bg-green/10 text-green rounded-xl p-4 text-sm">
-          Игра создана! Отправь ссылку друзьям в мессенджерах — ниже кнопка «Поделиться».
+          Турнир создан! Отправь ссылку игрокам — ниже кнопка «Поделиться».
         </p>
       )}
 
       <div className="rounded-2xl border border-line bg-surface p-6 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <SportBadge sport={game.sport} t={t} />
-          <span
-            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-              free > 0 ? "bg-green/10 text-green" : "bg-line-soft text-ink-soft"
-            }`}
-          >
-            {free > 0 ? `${free} ${t.freeSlots}` : t.statusMap.full}
+        <div className="flex items-center justify-between gap-2">
+          <SportBadge sport={tr.sport} t={t} />
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-cream border border-line-soft text-ink-soft">
+            {t.statusMap[tr.status]}
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold display leading-tight">
-          {sportLabel} · {game.level || "любой уровень"}
-        </h1>
+        <h1 className="text-3xl font-bold display leading-tight">{tr.name}</h1>
 
         <div className="flex flex-col gap-2.5 text-[15px] text-ink-soft">
           <span className="flex items-center gap-2.5">
             <Calendar size={17} className={accent} />
-            {fmtDate(game.starts_at, lang)}
+            {fmtDate(tr.starts_at, lang)}
           </span>
-          {game.courts && (
+          {tr.courts && (
             <span className="flex items-center gap-2.5">
               <MapPin size={17} className={accent} />
-              {game.courts.name}
-              {game.courts.address ? `, ${game.courts.address}` : ""}
+              {tr.courts.name}
+              {tr.courts.address ? `, ${tr.courts.address}` : ""}
             </span>
           )}
           <span className="flex items-center gap-2.5">
-            <Users size={17} className={accent} />
-            {joined}/{game.max_players} {t.players}
+            <Trophy size={17} className={accent} />
+            {t.format}: {tr.format}
           </span>
-          {game.level && (
+          {tr.level && (
             <span className="flex items-center gap-2.5">
               <Gauge size={17} className={accent} />
-              {game.level}
+              {tr.level}
             </span>
           )}
-          {game.price_som != null && (
+          {tr.price_som != null && (
             <span className="flex items-center gap-2.5">
               <Banknote size={17} className={accent} />
-              {game.price_som} {t.som}
+              {t.create.entryFee}: {tr.price_som} {t.som}
             </span>
           )}
-          {game.court_booked && (
-            <span className="flex items-center gap-2.5 text-green">
-              <BadgeCheck size={17} />
-              {t.create.booked}
+          {tr.prizes && (
+            <span className="flex items-start gap-2.5">
+              <Gift size={17} className={`${accent} mt-0.5`} />
+              {tr.prizes}
             </span>
           )}
         </div>
 
-        {game.comment && (
-          <p className="text-[15px] text-ink-soft/90 bg-cream rounded-xl p-3.5">{game.comment}</p>
+        {tr.description && (
+          <p className="text-[15px] text-ink-soft/90 bg-cream rounded-xl p-3.5">{tr.description}</p>
         )}
 
-        {game.organizer_contact && (
+        {tr.organizer_contact && (
           <div className="flex flex-col gap-2 border-t border-line-soft pt-4">
             <span className="text-sm font-medium text-ink">Организатор</span>
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm text-ink-soft">
-                {game.organizer_name ? `${game.organizer_name} · ` : ""}
-                {game.organizer_contact}
+                {tr.organizer_name ? `${tr.organizer_name} · ` : ""}
+                {tr.organizer_contact}
               </span>
               {cHref && (
                 <a
@@ -151,16 +142,16 @@ export default async function GamePage({
         )}
       </div>
 
-      {/* Участники + запись */}
+      {/* Участники + регистрация */}
       <div className="rounded-2xl border border-line bg-surface p-6 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-ink flex items-center gap-2">
-            <Users size={16} className={accent} /> Игроки {joined}/{game.max_players}
+            <Users size={16} className={accent} /> Участники {joined}/{tr.max_players}
           </span>
           {free > 0 ? (
-            <span className="text-xs text-green font-semibold">{free} {t.freeSlots}</span>
+            <span className="text-xs text-green font-semibold">{free} мест</span>
           ) : (
-            <span className="text-xs text-ink-soft font-semibold">{t.statusMap.full}</span>
+            <span className="text-xs text-ink-soft font-semibold">Мест нет</span>
           )}
         </div>
 
@@ -171,7 +162,7 @@ export default async function GamePage({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-ink-soft">Пока никто не записан — будь первым!</p>
+          <p className="text-sm text-ink-soft">Пока никто не зарегистрирован — стань первым!</p>
         )}
 
         {!me ? (
@@ -179,31 +170,31 @@ export default async function GamePage({
             href="/login"
             className="inline-flex items-center justify-center gap-2 bg-green text-white font-semibold px-6 py-3 rounded-full hover:bg-green-deep transition-colors"
           >
-            <UserPlus size={18} /> Войти и записаться
+            <UserPlus size={18} /> Войти и зарегистрироваться
           </Link>
         ) : iJoined ? (
-          <form action={leaveGame}>
-            <input type="hidden" name="game_id" value={game.id} />
+          <form action={leaveTournament}>
+            <input type="hidden" name="tournament_id" value={tr.id} />
             <div className="flex items-center gap-2">
               <span className="flex-1 inline-flex items-center justify-center gap-2 bg-green/10 text-green font-semibold px-4 py-3 rounded-full">
-                <Check size={18} /> Ты записан
+                <Check size={18} /> Ты зарегистрирован
               </span>
               <button
                 type="submit"
                 className="inline-flex items-center gap-2 border border-line text-ink-soft font-medium px-4 py-3 rounded-full hover:border-burgundy hover:text-burgundy transition-colors cursor-pointer"
               >
-                <LogOut size={16} /> Выйти
+                <LogOut size={16} /> Отменить
               </button>
             </div>
           </form>
         ) : free > 0 ? (
-          <form action={joinGame}>
-            <input type="hidden" name="game_id" value={game.id} />
+          <form action={joinTournament}>
+            <input type="hidden" name="tournament_id" value={tr.id} />
             <button
               type="submit"
               className="w-full inline-flex items-center justify-center gap-2 bg-green text-white font-semibold px-6 py-3 rounded-full hover:bg-green-deep transition-colors cursor-pointer"
             >
-              <UserPlus size={18} /> Записаться
+              <UserPlus size={18} /> Зарегистрироваться
             </button>
           </form>
         ) : (
@@ -214,7 +205,7 @@ export default async function GamePage({
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
-        <ShareButton title="Padel-PRO — открытая игра" text={shareText} />
+        <ShareButton title="Padel-PRO — турнир" text={shareText} />
       </div>
     </div>
   );

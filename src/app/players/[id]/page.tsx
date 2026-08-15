@@ -9,9 +9,12 @@ import {
   getPlayerAwards,
   getTournamentsPlayed,
   getRatingHistory,
+  getPlayerGames,
+  getPlayerUpcomingTournaments,
 } from "@/lib/data";
 import { SportBadge } from "@/components/SportBadge";
-import { fmtDate } from "@/components/GameCard";
+import { GameCard, fmtDate } from "@/components/GameCard";
+import { TournamentCard } from "@/components/TournamentCard";
 import { AvatarBox } from "@/components/AvatarBox";
 import { GradeBadge } from "@/components/GradeBadge";
 import { RatingChart } from "@/components/RatingChart";
@@ -31,12 +34,15 @@ export default async function PlayerPage({
   const player = await getPlayer(id);
   if (!player) notFound();
 
-  const [ratings, matches, awards, tournamentsPlayed] = await Promise.all([
-    getPlayerRatings(id),
-    getPlayerMatches(id),
-    getPlayerAwards(id),
-    getTournamentsPlayed(id),
-  ]);
+  const [ratings, matches, awards, tournamentsPlayed, myGames, myTournaments] =
+    await Promise.all([
+      getPlayerRatings(id),
+      getPlayerMatches(id),
+      getPlayerAwards(id),
+      getTournamentsPlayed(id),
+      getPlayerGames(id),
+      getPlayerUpcomingTournaments(id),
+    ]);
 
   const histories: Record<string, RatingPoint[]> = {};
   await Promise.all(
@@ -81,6 +87,30 @@ export default async function PlayerPage({
           </div>
         </div>
       </div>
+
+      {/* Ближайшие игры игрока */}
+      {myGames.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-2xl sm:text-3xl font-bold display">Ближайшие игры</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {myGames.map((g) => (
+              <GameCard key={g.id} game={g} t={t} lang={lang} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Турниры игрока */}
+      {myTournaments.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-2xl sm:text-3xl font-bold display">Турниры</h2>
+          <div className="grid sm:grid-cols-2 gap-5">
+            {myTournaments.map((tr) => (
+              <TournamentCard key={tr.id} tournament={tr} t={t} lang={lang} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Сторона корта */}
       <div className="flex flex-wrap gap-8">

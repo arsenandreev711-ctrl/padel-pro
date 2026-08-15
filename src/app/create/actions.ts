@@ -64,6 +64,11 @@ export async function createGame(formData: FormData) {
     .single();
   if (error || !gameRow) redirect("/create?tab=game&error=db");
 
+  // организатор автоматически первый игрок
+  if (me?.id) {
+    await db.from("game_players").insert({ game_id: gameRow.id, player_id: me.id });
+  }
+
   revalidatePath("/");
   revalidatePath("/games");
   redirect(`/games/${gameRow.id}?created=1`);
@@ -90,24 +95,33 @@ export async function createTournament(formData: FormData) {
   if (!starts_at) redirect("/create?tab=tournament&error=time");
   if (!organizer_contact) redirect("/create?tab=tournament&error=contact");
 
-  const { error } = await db.from("tournaments").insert({
-    name,
-    sport,
-    format,
-    starts_at: new Date(starts_at).toISOString(),
-    court_id: court_id && court_id !== "none" ? court_id : null,
-    max_players: Math.min(Math.max(max_players, 4), 64),
-    level,
-    price_som,
-    prizes,
-    description,
-    organizer_name,
-    organizer_contact,
-    status: "registration",
-  });
-  if (error) redirect("/create?tab=tournament&error=db");
+  const { data: trRow, error } = await db
+    .from("tournaments")
+    .insert({
+      name,
+      sport,
+      format,
+      starts_at: new Date(starts_at).toISOString(),
+      court_id: court_id && court_id !== "none" ? court_id : null,
+      max_players: Math.min(Math.max(max_players, 4), 64),
+      level,
+      price_som,
+      prizes,
+      description,
+      organizer_name,
+      organizer_contact,
+      status: "registration",
+    })
+    .select("id")
+    .single();
+  if (error || !trRow) redirect("/create?tab=tournament&error=db");
+
+  // организатор автоматически зарегистрирован
+  if (me?.id) {
+    await db.from("tournament_players").insert({ tournament_id: trRow.id, player_id: me.id });
+  }
 
   revalidatePath("/");
   revalidatePath("/tournaments");
-  redirect("/tournaments?created=1");
+  redirect(`/tournaments/${trRow.id}?created=1`);
 }

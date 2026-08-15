@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getLang } from "@/lib/lang";
 import { getGames } from "@/lib/data";
 import { GameCard } from "@/components/GameCard";
+import { FilterBar } from "@/components/FilterBar";
 import { Reveal } from "@/components/Reveal";
 
 export const dynamic = "force-dynamic";
@@ -10,10 +12,16 @@ export const dynamic = "force-dynamic";
 export default async function GamesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string }>;
+  searchParams: Promise<{ created?: string; sport?: string; level?: string }>;
 }) {
   const { lang, t } = await getLang();
   const [games, params] = await Promise.all([getGames(), searchParams]);
+
+  let list = games;
+  if (params.sport === "padel" || params.sport === "tennis")
+    list = list.filter((g) => g.sport === params.sport);
+  if (params.level && params.level !== "all")
+    list = list.filter((g) => g.level === params.level);
 
   return (
     <div className="flex flex-col gap-7">
@@ -34,11 +42,17 @@ export default async function GamesPage({
         <p className="bg-green/10 text-green rounded-xl p-4 text-sm">{t.createdBanner}</p>
       )}
 
-      {games.length === 0 ? (
-        <p className="text-ink-soft py-8">{t.noData}</p>
+      <Suspense>
+        <FilterBar levels={t.create.levels} />
+      </Suspense>
+
+      {list.length === 0 ? (
+        <p className="text-ink-soft py-8">
+          {games.length === 0 ? t.noData : "Нет игр по этому фильтру — создай свою!"}
+        </p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {games.map((g, i) => (
+          {list.map((g, i) => (
             <Reveal key={g.id} delay={i * 60}>
               <GameCard game={g} t={t} lang={lang} />
             </Reveal>
