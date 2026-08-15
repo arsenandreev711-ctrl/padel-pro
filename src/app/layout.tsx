@@ -12,22 +12,22 @@ import { currentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://padel-pro-bay.vercel.app"),
-  applicationName: "Padel-PRO",
-  title: "Padel-PRO — рейтинг падела и тенниса в Кыргызстане",
+  applicationName: "Rally",
+  title: "Rally — рейтинг падела и тенниса в Кыргызстане",
   description:
     "Единая платформа падел- и теннис-сообщества Кыргызстана: рейтинг игроков, запись на игры, турниры и результаты матчей.",
   openGraph: {
     type: "website",
-    siteName: "Padel-PRO",
+    siteName: "Rally",
     locale: "ru_RU",
-    title: "Padel-PRO — падел и теннис Кыргызстана",
+    title: "Rally — падел и теннис Кыргызстана",
     description:
       "Рейтинг игроков, открытые игры на кортах Бишкека, турниры и результаты матчей.",
     images: ["/og.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Padel-PRO — падел и теннис Кыргызстана",
+    title: "Rally — падел и теннис Кыргызстана",
     description:
       "Рейтинг игроков, открытые игры на кортах Бишкека, турниры и результаты матчей.",
     images: ["/og.png"],
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Padel-PRO",
+    title: "Rally",
     statusBarStyle: "default",
   },
   other: {

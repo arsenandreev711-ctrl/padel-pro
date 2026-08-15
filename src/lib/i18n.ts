@@ -2,7 +2,7 @@ export type Lang = "ru" | "ky";
 
 export const dict = {
   ru: {
-    siteName: "Padel-PRO",
+    siteName: "Rally",
     tagline: "Рейтинг падела и тенниса в Кыргызстане",
     kicker: "Падел × Теннис · Кыргызстан",
     heroTitle: "Одна культура спорта.",
@@ -59,7 +59,7 @@ export const dict = {
     profileMatches: "История матчей",
     score: "Счёт",
     vs: "против",
-    footer: "Padel-PRO — рейтинг падела и тенниса в Кыргызстане",
+    footer: "Rally — рейтинг падела и тенниса в Кыргызстане",
     all: "Все",
     yourName: "Твоё имя",
     phone: "Телефон",
@@ -107,7 +107,7 @@ export const dict = {
     },
   },
   ky: {
-    siteName: "Padel-PRO",
+    siteName: "Rally",
     tagline: "Кыргызстандагы падел жана теннис рейтинги",
     kicker: "Падел × Теннис · Кыргызстан",
     heroTitle: "Спорттун бир маданияты.",
@@ -164,7 +164,7 @@ export const dict = {
     profileMatches: "Матчтардын тарыхы",
     score: "Эсеп",
     vs: "каршы",
-    footer: "Padel-PRO — Кыргызстандагы падел жана теннис рейтинги",
+    footer: "Rally — Кыргызстандагы падел жана теннис рейтинги",
     all: "Баары",
     yourName: "Атың",
     phone: "Телефон",

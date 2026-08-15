@@ -26,7 +26,7 @@ export default async function LoginPage({
   return (
     <div className="flex flex-col items-center gap-8">
       <div className="flex flex-col gap-2 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold display">Вход в Padel-PRO</h1>
+        <h1 className="text-4xl sm:text-5xl font-bold display">Вход в Rally</h1>
         <p className="text-ink-soft max-w-md">
           Войди по номеру телефона, чтобы создавать игры, записываться к другим и
           вести свой профиль и рейтинг.

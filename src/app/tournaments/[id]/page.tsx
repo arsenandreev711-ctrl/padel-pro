@@ -33,7 +33,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const tr = await getTournament(id);
-  if (!tr) return { title: "Турнир — Padel-PRO" };
+  if (!tr) return { title: "Турнир — Rally" };
   const sport = tr.sport === "padel" ? "Падел" : "Теннис";
   const when = new Date(tr.starts_at).toLocaleString("ru-RU", {
     day: "numeric",
@@ -41,7 +41,7 @@ export async function generateMetadata({
     hour: "2-digit",
     minute: "2-digit",
   });
-  const title = `${tr.name} · ${sport} — Padel-PRO`;
+  const title = `${tr.name} · ${sport} — Rally`;
   const desc = `Турнир ${tr.format} · ${when}${tr.courts ? " · " + tr.courts.name : ""}${
     tr.price_som != null ? " · взнос " + tr.price_som + " сом" : ""
   }. Регистрируйся!`;
@@ -79,7 +79,7 @@ export default async function TournamentPage({
   const free = tr.max_players - joined;
   const iJoined = me ? participants.some((p) => p.player_id === me.id) : false;
   const accent = tr.sport === "padel" ? "text-green" : "text-burgundy";
-  const shareText = `Турнир «${tr.name}» · ${fmtDate(tr.starts_at, lang)} — регистрируйся на Padel-PRO`;
+  const shareText = `Турнир «${tr.name}» · ${fmtDate(tr.starts_at, lang)} — регистрируйся на Rally`;
   const cHref = tr.organizer_contact ? contactHref(tr.organizer_contact) : null;
 
   return (
@@ -233,7 +233,7 @@ export default async function TournamentPage({
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
-        <ShareButton title="Padel-PRO — турнир" text={shareText} />
+        <ShareButton title="Rally — турнир" text={shareText} />
       </div>
     </div>
   );

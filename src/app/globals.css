@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
-/* Padel-PRO — минимализм, единство падела (зелёный) и тенниса (бордовый) */
+/* Rally — минимализм, единство падела (зелёный) и тенниса (бордовый) */
 @theme {
   --color-cream: #f5f2ea;      /* тёплый фон */
   --color-surface: #ffffff;    /* карточки */

@@ -1,5 +1,5 @@
 /**
- * Фирменный знак Padel-PRO: теннисная ракетка (бордовая) и падел-ракетка (зелёная)
+ * Фирменный знак Rally: теннисная ракетка (бордовая) и падел-ракетка (зелёная)
  * скрещены крест-накрест за одним мячом — символ единства двух культур.
  */
 export function Emblem({
@@ -27,7 +27,7 @@ export function Emblem({
       fill="none"
       className={className}
       role="img"
-      aria-label="Padel-PRO"
+      aria-label="Rally"
     >
       {/* Теннисная ракетка (бордовая) */}
       <g transform="rotate(-30 50 50)">

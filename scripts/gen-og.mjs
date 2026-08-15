@@ -42,7 +42,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
   <rect x="0" y="0" width="${W/2}" height="10" fill="${GREEN}"/>
   <rect x="${W/2}" y="0" width="${W/2}" height="10" fill="${BURGUNDY}"/>
   <g transform="translate(120 165) scale(3.0)">${emblem()}</g>
-  <text x="470" y="300" font-family="'DejaVu Sans', sans-serif" font-size="96" font-weight="800" fill="${INK}">Padel<tspan fill="${GREEN}">·</tspan>PRO</text>
+  <text x="470" y="300" font-family="'DejaVu Sans', sans-serif" font-size="104" font-weight="800" fill="${INK}">Ra<tspan fill="${GREEN}">l</tspan>ly</text>
   <text x="474" y="360" font-family="'DejaVu Sans', sans-serif" font-size="36" font-weight="600" fill="${INKSOFT}">Падел и теннис Кыргызстана</text>
   <text x="474" y="410" font-family="'DejaVu Sans', sans-serif" font-size="32" font-weight="500" fill="${GREEN}">Рейтинг · Игры · Турниры</text>
 </svg>`;

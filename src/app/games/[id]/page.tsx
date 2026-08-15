@@ -32,7 +32,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const game = await getGame(id);
-  if (!game) return { title: "Игра — Padel-PRO" };
+  if (!game) return { title: "Игра — Rally" };
   const sport = game.sport === "padel" ? "Падел" : "Теннис";
   const when = new Date(game.starts_at).toLocaleString("ru-RU", {
     day: "numeric",
@@ -40,7 +40,7 @@ export async function generateMetadata({
     hour: "2-digit",
     minute: "2-digit",
   });
-  const title = `${sport} · ${when}${game.courts ? " · " + game.courts.name : ""} — Padel-PRO`;
+  const title = `${sport} · ${when}${game.courts ? " · " + game.courts.name : ""} — Rally`;
   const lvl = game.level && game.level !== "Любой уровень" ? ", уровень " + game.level : "";
   const desc = `Открытая игра${lvl} · до ${game.max_players} игроков${
     game.price_som != null ? " · " + game.price_som + " сом" : ""
@@ -82,7 +82,7 @@ export default async function GamePage({
   const sportLabel = game.sport === "padel" ? t.padel : t.tennis;
   const shareText = `${sportLabel} · ${fmtDate(game.starts_at, lang)}${
     game.courts ? " · " + game.courts.name : ""
-  } — присоединяйся на Padel-PRO`;
+  } — присоединяйся на Rally`;
 
   const cHref = game.organizer_contact ? contactHref(game.organizer_contact) : null;
 
@@ -252,7 +252,7 @@ export default async function GamePage({
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
-        <ShareButton title="Padel-PRO — открытая игра" text={shareText} />
+        <ShareButton title="Rally — открытая игра" text={shareText} />
       </div>
     </div>
   );

@@ -59,7 +59,7 @@ export default async function HowPage() {
         </span>
         <h1 className="text-4xl sm:text-5xl font-bold display">Как это работает</h1>
         <p className="text-ink-soft text-lg">
-          Padel-PRO объединяет падел- и теннис-сообщество Кыргызстана: находи партнёров,
+          Rally объединяет падел- и теннис-сообщество Кыргызстана: находи партнёров,
           играй на кортах Бишкека и следи за своим рейтингом.
         </p>
       </div>
