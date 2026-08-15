@@ -92,6 +92,7 @@ export default async function RootLayout({
             <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-soft">
               <a href="/how" className="hover:text-ink transition-colors">Как это работает</a>
               <a href="/rating" className="hover:text-ink transition-colors">{t.nav.rating}</a>
+              <a href="/players" className="hover:text-ink transition-colors">Игроки</a>
               <a href="/games" className="hover:text-ink transition-colors">{t.nav.games}</a>
               <a href="/matches" className="hover:text-ink transition-colors">{t.nav.matches}</a>
               <a href="/tournaments" className="hover:text-ink transition-colors">{t.nav.tournaments}</a>

@@ -28,12 +28,20 @@ export default async function RatingPage({
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <SportTabs active={sport} base="/rating" t={t} />
-        <Link
-          href="/join"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-green hover:text-green-deep transition-colors duration-200 cursor-pointer"
-        >
-          Новичок? Пройди анкету <ArrowRight size={15} />
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/players"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft hover:text-ink transition-colors cursor-pointer"
+          >
+            Все игроки <ArrowRight size={15} />
+          </Link>
+          <Link
+            href="/join"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-green hover:text-green-deep transition-colors duration-200 cursor-pointer"
+          >
+            Новичок? Пройди анкету <ArrowRight size={15} />
+          </Link>
+        </div>
       </div>
 
       <RatingTable ratings={ratings} t={t} />
