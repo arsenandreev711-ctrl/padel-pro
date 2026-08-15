@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { LogIn, UserPlus, Camera, Phone } from "lucide-react";
+import { LogIn, UserPlus, Camera } from "lucide-react";
 import { login, register } from "@/app/login/actions";
+import { PhoneField } from "@/components/PhoneField";
 
 type Tab = "login" | "register";
 
@@ -69,17 +70,7 @@ export function AuthForm({
         >
           <label className="flex flex-col gap-1.5">
             <span className={labelCls}>Номер телефона</span>
-            <span className="relative">
-              <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft" />
-              <input
-                name="phone"
-                type="tel"
-                required
-                defaultValue={initialPhone}
-                placeholder="+996 700 123456"
-                className={inputCls + " pl-10"}
-              />
-            </span>
+            <PhoneField initial={initialPhone} />
           </label>
           <button
             type="submit"
@@ -155,17 +146,7 @@ export function AuthForm({
 
           <label className="flex flex-col gap-1.5">
             <span className={labelCls}>Номер телефона</span>
-            <span className="relative">
-              <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft" />
-              <input
-                name="phone"
-                type="tel"
-                required
-                defaultValue={initialPhone}
-                placeholder="+996 700 123456"
-                className={inputCls + " pl-10"}
-              />
-            </span>
+            <PhoneField initial={initialPhone} />
           </label>
 
           <button
