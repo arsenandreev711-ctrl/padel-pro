@@ -55,7 +55,7 @@ export async function createGame(formData: FormData) {
     organizer_name,
     organizer_contact,
   });
-  if (error) redirect("/create?tab=game&error=db");
+  if (error) redirect("/create?tab=game&error=db&msg=" + encodeURIComponent(error.message || String(error)));
 
   revalidatePath("/");
   revalidatePath("/games");
