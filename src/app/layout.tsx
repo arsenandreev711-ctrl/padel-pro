@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     title: "Padel-PRO",
     statusBarStyle: "default",
   },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
   icons: {
     icon: [
       { url: "/icons/favicon-96.png", sizes: "96x96", type: "image/png" },
