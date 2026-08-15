@@ -96,7 +96,7 @@ export async function getGames(): Promise<Game[]> {
     .from("games")
     .select("*, courts(*), game_players(player_id, players(*))")
     .in("status", ["open", "full"])
-    .gte("starts_at", new Date(Date.now() - 864e5).toISOString())
+    .gte("starts_at", new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString())
     .order("starts_at");
   return (data as Game[]) ?? [];
 }

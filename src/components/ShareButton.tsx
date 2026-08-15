@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { Share2, Check, Copy, Send, MessageCircle } from "lucide-react";
 
-export function ShareButton({ title, text }: { title: string; text: string }) {
+export function ShareButton({
+  title,
+  text,
+  label = "Поделиться",
+}: {
+  title: string;
+  text: string;
+  label?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   function currentUrl() {
@@ -45,7 +53,7 @@ export function ShareButton({ title, text }: { title: string; text: string }) {
         onClick={nativeShare}
         className="inline-flex items-center justify-center gap-2 bg-green text-white font-semibold px-6 py-3 rounded-full hover:bg-green-deep transition-colors cursor-pointer"
       >
-        <Share2 size={18} /> Поделиться игрой
+        <Share2 size={18} /> {label}
       </button>
       <div className="flex items-center gap-2">
         <a

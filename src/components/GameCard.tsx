@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Calendar, MapPin, Users, Banknote, Gauge, Phone, BadgeCheck } from "lucide-react";
 import type { Game } from "@/lib/types";
 import type { Dict, Lang } from "@/lib/i18n";
+import { gameTimeStatus } from "@/lib/gameStatus";
 import { SportBadge } from "./SportBadge";
 
 export function fmtDate(iso: string, lang: Lang) {
@@ -17,6 +18,7 @@ export function GameCard({ game, t, lang }: { game: Game; t: Dict; lang: Lang })
   const joined = game.game_players?.length ?? 0;
   const free = game.max_players - joined;
   const accent = game.sport === "padel" ? "text-green" : "text-burgundy";
+  const ts = gameTimeStatus(game.starts_at);
   return (
     <Link
       href={`/games/${game.id}`}
@@ -24,13 +26,23 @@ export function GameCard({ game, t, lang }: { game: Game; t: Dict; lang: Lang })
     >
       <div className="flex items-center justify-between">
         <SportBadge sport={game.sport} t={t} />
-        <span
-          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-            free > 0 ? "bg-green/10 text-green" : "bg-line-soft text-ink-soft"
-          }`}
-        >
-          {free > 0 ? `${free} ${t.freeSlots}` : t.statusMap.full}
-        </span>
+        {ts === "live" ? (
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-burgundy/10 text-burgundy">
+            <span className="w-1.5 h-1.5 rounded-full bg-burgundy animate-pulse" /> Идёт
+          </span>
+        ) : ts === "finished" ? (
+          <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-line-soft text-ink-soft">
+            Завершена
+          </span>
+        ) : (
+          <span
+            className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+              free > 0 ? "bg-green/10 text-green" : "bg-line-soft text-ink-soft"
+            }`}
+          >
+            {free > 0 ? `${free} ${t.freeSlots}` : t.statusMap.full}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col gap-2 text-sm text-ink-soft">

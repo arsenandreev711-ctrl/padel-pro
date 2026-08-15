@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { getLang } from "@/lib/lang";
 import { getGame } from "@/lib/data";
+import { gameTimeStatus } from "@/lib/gameStatus";
 import { currentUser } from "@/lib/auth";
 import { joinGame, leaveGame } from "@/app/games/actions";
 import { fmtDate } from "@/components/GameCard";
@@ -78,6 +79,7 @@ export default async function GamePage({
   const joined = participants.length;
   const free = game.max_players - joined;
   const iJoined = me ? participants.some((p) => p.player_id === me.id) : false;
+  const ts = gameTimeStatus(game.starts_at);
   const accent = game.sport === "padel" ? "text-green" : "text-burgundy";
   const sportLabel = game.sport === "padel" ? t.padel : t.tennis;
   const shareText = `${sportLabel} · ${fmtDate(game.starts_at, lang)}${
@@ -104,13 +106,23 @@ export default async function GamePage({
       <div className="rounded-2xl border border-line bg-surface p-6 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <SportBadge sport={game.sport} t={t} />
-          <span
-            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-              free > 0 ? "bg-green/10 text-green" : "bg-line-soft text-ink-soft"
-            }`}
-          >
-            {free > 0 ? `${free} ${t.freeSlots}` : t.statusMap.full}
-          </span>
+          {ts === "live" ? (
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-burgundy/10 text-burgundy">
+              <span className="w-1.5 h-1.5 rounded-full bg-burgundy animate-pulse" /> Идёт сейчас
+            </span>
+          ) : ts === "finished" ? (
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-line-soft text-ink-soft">
+              Завершена
+            </span>
+          ) : (
+            <span
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                free > 0 ? "bg-green/10 text-green" : "bg-line-soft text-ink-soft"
+              }`}
+            >
+              {free > 0 ? `${free} ${t.freeSlots}` : t.statusMap.full}
+            </span>
+          )}
         </div>
 
         <h1 className="text-3xl font-bold display leading-tight">
@@ -203,7 +215,11 @@ export default async function GamePage({
           <p className="text-sm text-ink-soft">Пока никто не записан — будь первым!</p>
         )}
 
-        {!me ? (
+        {ts === "finished" ? (
+          <span className="inline-flex items-center justify-center gap-2 bg-line-soft text-ink-soft font-semibold px-6 py-3 rounded-full">
+            Игра завершена
+          </span>
+        ) : !me ? (
           <Link
             href="/login"
             className="inline-flex items-center justify-center gap-2 bg-green text-white font-semibold px-6 py-3 rounded-full hover:bg-green-deep transition-colors"
@@ -252,7 +268,7 @@ export default async function GamePage({
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
-        <ShareButton title="MatePoint — открытая игра" text={shareText} />
+        <ShareButton title="MatePoint — открытая игра" text={shareText} label="Поделиться игрой" />
       </div>
     </div>
   );

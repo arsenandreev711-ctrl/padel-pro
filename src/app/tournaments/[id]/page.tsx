@@ -233,7 +233,7 @@ export default async function TournamentPage({
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
-        <ShareButton title="MatePoint — турнир" text={shareText} />
+        <ShareButton title="MatePoint — турнир" text={shareText} label="Поделиться турниром" />
       </div>
     </div>
   );

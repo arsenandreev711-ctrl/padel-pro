@@ -22,9 +22,36 @@ import { GradeBadge } from "@/components/GradeBadge";
 import { RatingChart } from "@/components/RatingChart";
 import { SideControl } from "@/components/SideControl";
 import { AwardCard } from "@/components/Award";
+import { ShareButton } from "@/components/ShareButton";
+import { gradeLabel } from "@/lib/grading";
 import type { RatingPoint } from "@/lib/types";
+import type { Metadata } from "next";
 
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const player = await getPlayer(id);
+  if (!player) return { title: "Игрок — MatePoint" };
+  const ratings = await getPlayerRatings(id);
+  const parts = ratings.map(
+    (r) => `${r.sport === "padel" ? "Падел" : "Теннис"} ${gradeLabel(r.sport, r.rating)}`
+  );
+  const title = `${player.full_name} — MatePoint`;
+  const desc = parts.length
+    ? `${parts.join(" · ")} · ${player.city}. Профиль игрока на MatePoint.`
+    : `Игрок из города ${player.city} на MatePoint.`;
+  return {
+    title,
+    description: desc,
+    openGraph: { type: "profile", title, description: desc, images: ["/og.png"] },
+    twitter: { card: "summary_large_image", title, description: desc, images: ["/og.png"] },
+  };
+}
 
 export default async function PlayerPage({
   params,
@@ -108,6 +135,18 @@ export default async function PlayerPage({
           </span>
           <span className="text-green font-semibold text-sm shrink-0">Пройти →</span>
         </Link>
+      )}
+
+      {/* Поделиться своим профилем — позвать друзей */}
+      {isOwner && (
+        <div className="rounded-2xl border border-line bg-surface p-5 flex flex-col gap-3">
+          <span className="font-semibold display">Позови друзей в MatePoint</span>
+          <ShareButton
+            title={`${player.full_name} — MatePoint`}
+            text="Мой профиль на MatePoint — залетай играть в падел и теннис"
+            label="Поделиться профилем"
+          />
+        </div>
       )}
 
       {/* Ближайшие игры игрока */}
