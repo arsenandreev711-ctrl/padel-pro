@@ -5,6 +5,7 @@ import { getDict, type Lang } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { Emblem } from "@/components/Emblem";
 import { isDemo } from "@/lib/data";
 import { currentUser } from "@/lib/auth";
@@ -77,6 +78,7 @@ export default async function RootLayout({
             <span>Бишкек · Кыргызстан</span>
           </div>
         </footer>
+        <InstallPrompt />
         <BottomNav user={user ? { id: user.id } : null} />
       </body>
     </html>
