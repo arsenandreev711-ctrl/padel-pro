@@ -90,7 +90,7 @@ export async function register(formData: FormData) {
 
   await setSession(player.id);
   revalidatePath("/");
-  redirect("/players/" + player.id);
+  redirect("/join");
 }
 
 export async function logout() {

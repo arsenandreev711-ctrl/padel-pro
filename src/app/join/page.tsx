@@ -2,6 +2,8 @@ import { getLang } from "@/lib/lang";
 import { hasSupabase } from "@/lib/supabase/server";
 import { QuestionnaireForm } from "@/components/QuestionnaireForm";
 import { RatingScale } from "@/components/RatingScale";
+import { currentUser } from "@/lib/auth";
+import { createPlayer, setMyLevel } from "@/app/players/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,8 @@ export default async function JoinPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   await getLang();
-  const params = await searchParams;
+  const [params, me] = await Promise.all([searchParams, currentUser()]);
+  const loggedIn = !!me;
 
   return (
     <div className="flex flex-col gap-8 max-w-5xl">
@@ -21,12 +24,12 @@ export default async function JoinPage({
           <span className="w-1.5 h-1.5 rounded-full bg-burgundy" />
         </span>
         <h1 className="text-4xl sm:text-5xl font-bold display">
-          Определи свой уровень
+          {loggedIn ? "Определи свой уровень" : "Определи свой уровень"}
         </h1>
         <p className="text-ink-soft max-w-2xl">
-          Ответь на несколько вопросов об опыте в паделе и теннисе — мы рассчитаем
-          твой стартовый уровень и рейтинг. Дальше он будет уточняться по
-          результатам матчей.
+          {loggedIn
+            ? `${me!.full_name}, ответь на несколько вопросов об опыте — мы рассчитаем твой стартовый рейтинг и добавим тебя в таблицу. Дальше он уточняется по результатам матчей.`
+            : "Ответь на несколько вопросов об опыте в паделе и теннисе — мы рассчитаем твой стартовый уровень и рейтинг. Дальше он будет уточняться по результатам матчей."}
         </p>
       </div>
 
@@ -42,7 +45,11 @@ export default async function JoinPage({
         </p>
       )}
 
-      <QuestionnaireForm hasDb={hasSupabase()} />
+      <QuestionnaireForm
+        hasDb={hasSupabase()}
+        loggedIn={loggedIn}
+        submitAction={loggedIn ? setMyLevel : createPlayer}
+      />
 
       <div className="grid md:grid-cols-2 gap-5">
         <RatingScale sport="padel" />

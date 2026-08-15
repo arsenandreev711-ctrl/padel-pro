@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { createPlayer } from "@/app/players/actions";
 import { grade, levelToElo } from "@/lib/grading";
 import type { CourtSide, Sport } from "@/lib/types";
 
@@ -200,7 +199,15 @@ function SportBlock({
   );
 }
 
-export function QuestionnaireForm({ hasDb }: { hasDb: boolean }) {
+export function QuestionnaireForm({
+  hasDb,
+  loggedIn = false,
+  submitAction,
+}: {
+  hasDb: boolean;
+  loggedIn?: boolean;
+  submitAction: (formData: FormData) => void;
+}) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("Бишкек");
   const [padelOn, setPadelOn] = useState(true);
@@ -218,13 +225,14 @@ export function QuestionnaireForm({ hasDb }: { hasDb: boolean }) {
     tennisOn ? { sport: "tennis" as const, level: tLevel } : null,
   ].filter(Boolean) as { sport: Sport; level: number }[];
 
-  const canSubmit = name.trim().length > 1 && (padelOn || tennisOn);
+  const canSubmit = (loggedIn || name.trim().length > 1) && (padelOn || tennisOn);
 
   return (
-    <form action={createPlayer} className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
+    <form action={submitAction} className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
       <div className="flex flex-col gap-6">
         {/* Базовое */}
         <div className="rounded-2xl border border-line bg-surface p-6 flex flex-col gap-4">
+          {!loggedIn && (
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft">
@@ -251,6 +259,7 @@ export function QuestionnaireForm({ hasDb }: { hasDb: boolean }) {
               />
             </label>
           </div>
+          )}
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -337,7 +346,7 @@ export function QuestionnaireForm({ hasDb }: { hasDb: boolean }) {
           disabled={!canSubmit}
           className="mt-2 bg-cream text-ink font-bold px-5 py-2.5 rounded-full hover:bg-white transition-colors duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Создать профиль
+          {loggedIn ? "Сохранить уровень" : "Создать профиль"}
         </button>
         {!hasDb && (
           <p className="text-[11px] text-cream/55">

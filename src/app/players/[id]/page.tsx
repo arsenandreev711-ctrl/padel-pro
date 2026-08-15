@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Trophy, Swords, Medal } from "lucide-react";
+import { MapPin, Trophy, Swords, Medal, Gauge } from "lucide-react";
 import { getLang } from "@/lib/lang";
+import { currentUser } from "@/lib/auth";
 import {
   getPlayer,
   getPlayerRatings,
@@ -31,8 +33,9 @@ export default async function PlayerPage({
 }) {
   const { id } = await params;
   const { lang, t } = await getLang();
-  const player = await getPlayer(id);
+  const [player, me] = await Promise.all([getPlayer(id), currentUser()]);
   if (!player) notFound();
+  const isOwner = me?.id === player.id;
 
   const [ratings, matches, awards, tournamentsPlayed, myGames, myTournaments] =
     await Promise.all([
@@ -87,6 +90,25 @@ export default async function PlayerPage({
           </div>
         </div>
       </div>
+
+      {/* Призыв пройти анкету — если это твой профиль и уровень не задан */}
+      {isOwner && ratings.length === 0 && (
+        <Link
+          href="/join"
+          className="flex items-center justify-between gap-3 rounded-2xl border border-green/30 bg-green/5 p-5 hover:bg-green/10 transition-colors"
+        >
+          <span className="flex items-center gap-3">
+            <Gauge size={22} className="text-green shrink-0" />
+            <span className="flex flex-col">
+              <span className="font-semibold">Определи свой уровень</span>
+              <span className="text-sm text-ink-soft">
+                Пройди короткую анкету — попадёшь в рейтинг и получишь стартовый уровень.
+              </span>
+            </span>
+          </span>
+          <span className="text-green font-semibold text-sm shrink-0">Пройти →</span>
+        </Link>
+      )}
 
       {/* Ближайшие игры игрока */}
       {myGames.length > 0 && (
