@@ -22,8 +22,36 @@ import { fmtDate } from "@/components/GameCard";
 import { SportBadge } from "@/components/SportBadge";
 import { ShareButton } from "@/components/ShareButton";
 import { PlayerChip } from "@/components/PlayerChip";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const tr = await getTournament(id);
+  if (!tr) return { title: "Турнир — Padel-PRO" };
+  const sport = tr.sport === "padel" ? "Падел" : "Теннис";
+  const when = new Date(tr.starts_at).toLocaleString("ru-RU", {
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const title = `${tr.name} · ${sport} — Padel-PRO`;
+  const desc = `Турнир ${tr.format} · ${when}${tr.courts ? " · " + tr.courts.name : ""}${
+    tr.price_som != null ? " · взнос " + tr.price_som + " сом" : ""
+  }. Регистрируйся!`;
+  return {
+    title,
+    description: desc,
+    openGraph: { type: "website", title, description: desc, images: ["/og.png"] },
+    twitter: { card: "summary_large_image", title, description: desc, images: ["/og.png"] },
+  };
+}
 
 function contactHref(contact: string): string | null {
   const c = contact.trim();
