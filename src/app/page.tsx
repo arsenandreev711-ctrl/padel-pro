@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Plus } from "lucide-react";
 import { getLang } from "@/lib/lang";
 import { getRatings, getGames, getTournaments } from "@/lib/data";
 import { RatingTable } from "@/components/RatingTable";
@@ -23,11 +23,6 @@ export default async function Home() {
       {/* Hero */}
       <section className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-8 items-center pt-2">
         <div className="flex flex-col gap-6">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
-            <span className="w-1.5 h-1.5 rounded-full bg-green" />
-            {t.kicker}
-            <span className="w-1.5 h-1.5 rounded-full bg-burgundy" />
-          </span>
           <h1 className="text-5xl sm:text-6xl lg:text-[4.2rem] font-extrabold leading-[1.02] display">
             {t.heroTitle}
           </h1>
@@ -36,16 +31,22 @@ export default async function Home() {
           </p>
           <div className="flex flex-wrap gap-3 mt-1">
             <Link
-              href="/rating"
+              href="/create"
               className="inline-flex items-center gap-2 bg-green text-white font-semibold px-6 py-3 rounded-full hover:bg-green-deep transition-colors duration-200 cursor-pointer"
             >
-              {t.nav.rating} <ArrowRight size={17} />
+              <Plus size={18} /> {t.create.cta}
             </Link>
             <Link
               href="/games"
               className="inline-flex items-center gap-2 border border-line text-ink font-semibold px-6 py-3 rounded-full hover:border-ink-soft transition-colors duration-200 cursor-pointer"
             >
               {t.gamesTitle}
+            </Link>
+            <Link
+              href="/rating"
+              className="inline-flex items-center gap-2 border border-line text-ink font-semibold px-6 py-3 rounded-full hover:border-ink-soft transition-colors duration-200 cursor-pointer"
+            >
+              {t.nav.rating} <ArrowRight size={17} />
             </Link>
           </div>
         </div>

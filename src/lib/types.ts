@@ -69,6 +69,10 @@ export interface Game {
   price_som: number | null;
   comment: string | null;
   status: "open" | "full" | "finished" | "cancelled";
+  level?: string | null;
+  court_booked?: boolean | null;
+  organizer_name?: string | null;
+  organizer_contact?: string | null;
   courts?: Court;
   game_players?: { player_id: string; players?: Player }[];
 }
@@ -84,6 +88,10 @@ export interface Tournament {
   price_som: number | null;
   description: string | null;
   status: "upcoming" | "registration" | "ongoing" | "finished";
+  level?: string | null;
+  prizes?: string | null;
+  organizer_name?: string | null;
+  organizer_contact?: string | null;
   courts?: Court;
   tournament_players?: { player_id: string; place: number | null; players?: Player }[];
 }

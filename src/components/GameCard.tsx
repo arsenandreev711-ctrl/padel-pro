@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, Banknote } from "lucide-react";
+import { Calendar, MapPin, Users, Banknote, Gauge, Phone, BadgeCheck } from "lucide-react";
 import type { Game } from "@/lib/types";
 import type { Dict, Lang } from "@/lib/i18n";
 import { SportBadge } from "./SportBadge";
@@ -44,10 +44,29 @@ export function GameCard({ game, t, lang }: { game: Game; t: Dict; lang: Lang })
           <Users size={15} className={accent} />
           {joined}/{game.max_players} {t.players}
         </span>
+        {game.level && (
+          <span className="flex items-center gap-2.5">
+            <Gauge size={15} className={accent} />
+            {game.level}
+          </span>
+        )}
         {game.price_som != null && (
           <span className="flex items-center gap-2.5">
             <Banknote size={15} className={accent} />
             {game.price_som} {t.som}
+          </span>
+        )}
+        {game.court_booked && (
+          <span className="flex items-center gap-2.5 text-green">
+            <BadgeCheck size={15} />
+            {t.create.booked}
+          </span>
+        )}
+        {game.organizer_contact && (
+          <span className="flex items-center gap-2.5">
+            <Phone size={15} className={accent} />
+            {game.organizer_name ? `${game.organizer_name} · ` : ""}
+            {game.organizer_contact}
           </span>
         )}
       </div>

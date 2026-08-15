@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, Banknote } from "lucide-react";
+import { Calendar, MapPin, Users, Banknote, Gauge, Phone, Gift } from "lucide-react";
 import type { Tournament } from "@/lib/types";
 import type { Dict, Lang } from "@/lib/i18n";
 import { SportBadge } from "./SportBadge";
@@ -41,10 +41,29 @@ export function TournamentCard({
           <Users size={15} className={accent} />
           {joined}/{tr.max_players} {t.players}
         </span>
+        {tr.level && (
+          <span className="flex items-center gap-2.5">
+            <Gauge size={15} className={accent} />
+            {tr.level}
+          </span>
+        )}
         {tr.price_som != null && (
           <span className="flex items-center gap-2.5">
             <Banknote size={15} className={accent} />
-            {tr.price_som} {t.som}
+            {t.create.entryFee}: {tr.price_som} {t.som}
+          </span>
+        )}
+        {tr.prizes && (
+          <span className="flex items-start gap-2.5">
+            <Gift size={15} className={`${accent} mt-0.5`} />
+            {tr.prizes}
+          </span>
+        )}
+        {tr.organizer_contact && (
+          <span className="flex items-center gap-2.5">
+            <Phone size={15} className={accent} />
+            {tr.organizer_name ? `${tr.organizer_name} · ` : ""}
+            {tr.organizer_contact}
           </span>
         )}
       </div>
