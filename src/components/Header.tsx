@@ -38,6 +38,7 @@ export function Header({ lang, user }: { lang: Lang; user: HeaderUser }) {
     { href: "/", label: t.nav.home },
     { href: "/rating", label: t.nav.rating },
     { href: "/games", label: t.nav.games },
+    { href: "/matches", label: t.nav.matches },
     { href: "/tournaments", label: t.nav.tournaments },
     { href: "/courts", label: t.nav.courts },
   ];

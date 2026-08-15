@@ -211,6 +211,15 @@ export default async function GamePage({
             Мест нет
           </span>
         )}
+
+        {me && (
+          <Link
+            href="/matches/new"
+            className="text-sm text-ink-soft hover:text-green transition-colors text-center"
+          >
+            Уже сыграли? Записать результат →
+          </Link>
+        )}
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
