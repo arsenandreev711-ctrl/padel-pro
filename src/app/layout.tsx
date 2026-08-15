@@ -5,6 +5,7 @@ import { getDict, type Lang } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { Emblem } from "@/components/Emblem";
 import { isDemo } from "@/lib/data";
+import { currentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Padel-PRO — рейтинг падела и тенниса в Кыргызстане",
@@ -20,11 +21,19 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value === "ky" ? "ky" : "ru") as Lang;
   const t = getDict(lang);
+  const user = await currentUser();
 
   return (
     <html lang={lang} className="h-full antialiased">
       <body className="min-h-full flex flex-col">
-        <Header lang={lang} />
+        <Header
+          lang={lang}
+          user={
+            user
+              ? { id: user.id, full_name: user.full_name, avatar_url: user.avatar_url ?? null }
+              : null
+          }
+        />
         {isDemo() && (
           <div className="bg-burgundy/8 text-burgundy text-center text-xs sm:text-sm py-2 px-4 border-b border-line">
             {t.demoBanner}

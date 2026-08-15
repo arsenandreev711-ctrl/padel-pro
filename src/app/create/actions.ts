@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { supaAdmin } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import type { Sport } from "@/lib/types";
 
 function requireDb() {
@@ -29,6 +30,7 @@ function num(v: FormDataEntryValue | null): number | null {
 // ——— Публичное создание открытой игры ———
 export async function createGame(formData: FormData) {
   const db = requireDb();
+  const me = await currentUser();
   const sport = toSport(formData.get("sport"));
   const starts_at = str(formData.get("starts_at"));
   const court_id = str(formData.get("court_id"));
@@ -37,8 +39,8 @@ export async function createGame(formData: FormData) {
   const court_booked = formData.get("court_booked") === "on";
   const price_som = num(formData.get("price_som"));
   const comment = str(formData.get("comment")) || null;
-  const organizer_name = str(formData.get("organizer_name")) || null;
-  const organizer_contact = str(formData.get("organizer_contact")) || null;
+  const organizer_name = str(formData.get("organizer_name")) || me?.full_name || null;
+  const organizer_contact = str(formData.get("organizer_contact")) || me?.phone || null;
 
   if (!starts_at) redirect("/create?tab=game&error=time");
   if (!organizer_contact) redirect("/create?tab=game&error=contact");
@@ -54,6 +56,7 @@ export async function createGame(formData: FormData) {
     comment,
     organizer_name,
     organizer_contact,
+    created_by: me?.id ?? null,
   });
   if (error) redirect("/create?tab=game&error=db&msg=" + encodeURIComponent(error.message || String(error)));
 
@@ -65,6 +68,7 @@ export async function createGame(formData: FormData) {
 // ——— Публичное создание турнира ———
 export async function createTournament(formData: FormData) {
   const db = requireDb();
+  const me = await currentUser();
   const name = str(formData.get("name"));
   const sport = toSport(formData.get("sport"));
   const format = str(formData.get("format")) || "Americano";
@@ -75,8 +79,8 @@ export async function createTournament(formData: FormData) {
   const price_som = num(formData.get("price_som")); // взнос
   const prizes = str(formData.get("prizes")) || null;
   const description = str(formData.get("description")) || null;
-  const organizer_name = str(formData.get("organizer_name")) || null;
-  const organizer_contact = str(formData.get("organizer_contact")) || null;
+  const organizer_name = str(formData.get("organizer_name")) || me?.full_name || null;
+  const organizer_contact = str(formData.get("organizer_contact")) || me?.phone || null;
 
   if (!name) redirect("/create?tab=tournament&error=name");
   if (!starts_at) redirect("/create?tab=tournament&error=time");

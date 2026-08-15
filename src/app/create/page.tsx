@@ -1,6 +1,7 @@
 import { getLang } from "@/lib/lang";
 import { getCourts } from "@/lib/data";
 import { CreateForm } from "@/components/CreateForm";
+import { currentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -10,8 +11,7 @@ export default async function CreatePage({
   searchParams: Promise<{ tab?: string; error?: string }>;
 }) {
   const { t } = await getLang();
-  const courts = await getCourts();
-  const params = await searchParams;
+  const [courts, me, params] = await Promise.all([getCourts(), currentUser(), searchParams]);
   const tab = params.tab === "tournament" ? "tournament" : "game";
 
   const errMap: Record<string, string> = {
@@ -33,7 +33,13 @@ export default async function CreatePage({
         <p className="bg-burgundy/10 text-burgundy rounded-xl p-4 text-sm max-w-2xl">{errMsg}</p>
       )}
 
-      <CreateForm courts={courts} t={t} initialTab={tab} />
+      <CreateForm
+        courts={courts}
+        t={t}
+        initialTab={tab}
+        meName={me?.full_name ?? ""}
+        meContact={me?.phone ?? ""}
+      />
     </div>
   );
 }

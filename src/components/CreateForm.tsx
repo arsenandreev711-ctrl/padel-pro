@@ -40,10 +40,14 @@ export function CreateForm({
   courts,
   t,
   initialTab = "game",
+  meName = "",
+  meContact = "",
 }: {
   courts: Court[];
   t: Dict;
   initialTab?: Tab;
+  meName?: string;
+  meContact?: string;
 }) {
   const [tab, setTab] = useState<Tab>(initialTab);
   const [sport, setSport] = useState<SportT>("padel");
@@ -134,12 +138,13 @@ export function CreateForm({
   const Organizer = (
     <div className="grid sm:grid-cols-2 gap-4">
       <Field label={c.organizerName} t={t} optional>
-        <input name="organizer_name" className={inputCls} placeholder={t.yourName} />
+        <input name="organizer_name" defaultValue={meName} className={inputCls} placeholder={t.yourName} />
       </Field>
       <Field label={c.organizerContact} t={t}>
         <input
           name="organizer_contact"
           required
+          defaultValue={meContact}
           className={inputCls}
           placeholder={c.organizerContactPh}
         />

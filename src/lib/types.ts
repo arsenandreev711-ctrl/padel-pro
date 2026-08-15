@@ -13,6 +13,7 @@ export interface Player {
   id: string;
   full_name: string;
   city: string;
+  phone?: string | null;
   avatar_url: string | null;
   side_padel?: CourtSide | null;
   side_tennis?: CourtSide | null;

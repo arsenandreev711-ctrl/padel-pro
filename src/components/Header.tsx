@@ -3,11 +3,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn, LogOut } from "lucide-react";
 import { getDict, type Lang } from "@/lib/i18n";
 import { Emblem } from "./Emblem";
+import { logout } from "@/app/login/actions";
 
-export function Header({ lang }: { lang: Lang }) {
+type HeaderUser = { id: string; full_name: string; avatar_url: string | null } | null;
+
+function Avatar({ name, src }: { name: string; src: string | null }) {
+  const initials = name
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+  return (
+    <span className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-green to-burgundy text-white flex items-center justify-center text-xs font-bold shrink-0">
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={name} className="w-full h-full object-cover" />
+      ) : (
+        initials || "•"
+      )}
+    </span>
+  );
+}
+
+export function Header({ lang, user }: { lang: Lang; user: HeaderUser }) {
   const t = getDict(lang);
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -53,6 +75,35 @@ export function Header({ lang }: { lang: Lang }) {
         </nav>
 
         <div className="flex items-center gap-2">
+          {user ? (
+            <div className="hidden md:flex items-center gap-1.5">
+              <Link
+                href={`/players/${user.id}`}
+                className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border border-line hover:border-ink-soft transition-colors cursor-pointer"
+                title="Мой профиль"
+              >
+                <Avatar name={user.full_name} src={user.avatar_url} />
+                <span className="text-sm font-medium max-w-[9rem] truncate">{user.full_name}</span>
+              </Link>
+              <form action={logout}>
+                <button
+                  type="submit"
+                  aria-label="Выйти"
+                  className="p-2 rounded-full text-ink-soft hover:text-burgundy hover:bg-line-soft transition-colors cursor-pointer"
+                >
+                  <LogOut size={17} />
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden md:inline-flex items-center gap-1.5 bg-green text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-green-deep transition-colors cursor-pointer"
+            >
+              <LogIn size={15} /> Войти
+            </Link>
+          )}
+
           <a
             href={`/api/lang?to=${other}&back=${encodeURIComponent(pathname)}`}
             className="text-xs font-semibold border border-line rounded-full px-3 py-1.5 text-ink-soft hover:text-ink hover:border-ink-soft transition-colors duration-200 cursor-pointer uppercase tracking-wide"
@@ -84,6 +135,36 @@ export function Header({ lang }: { lang: Lang }) {
               {l.label}
             </Link>
           ))}
+          <div className="border-t border-line-soft mt-2 pt-2">
+            {user ? (
+              <>
+                <Link
+                  href={`/players/${user.id}`}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 px-2 py-3 font-medium"
+                >
+                  <Avatar name={user.full_name} src={user.avatar_url} />
+                  {user.full_name}
+                </Link>
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    className="flex items-center gap-2 px-2 py-3 font-medium text-burgundy w-full text-left cursor-pointer"
+                  >
+                    <LogOut size={17} /> Выйти
+                  </button>
+                </form>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-2 py-3 font-medium text-green"
+              >
+                <LogIn size={17} /> Войти
+              </Link>
+            )}
+          </div>
         </nav>
       )}
     </header>
