@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Check } from "lucide-react";
 import { grade, levelToElo } from "@/lib/grading";
 import type { CourtSide, Sport } from "@/lib/types";
 
@@ -145,6 +146,13 @@ function SportBlock({
   const accent = sport === "padel" ? "green" : "burgundy";
   return (
     <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-6">
+      <div className="flex items-center gap-2.5 pb-1 border-b border-line-soft">
+        <span className={`w-3 h-3 rounded-full ${accent === "green" ? "bg-green" : "bg-burgundy"}`} />
+        <span className="font-bold display text-lg">
+          {sport === "padel" ? "Падел" : "Теннис"}
+        </span>
+        <span className="text-sm text-ink-soft">— твой уровень</span>
+      </div>
       {qs.map((q) => (
         <div key={q.id} className="flex flex-col gap-2">
           <p className="font-semibold text-sm">{q.q}</p>
@@ -210,7 +218,7 @@ export function QuestionnaireForm({
 }) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("Бишкек");
-  const [padelOn, setPadelOn] = useState(true);
+  const [padelOn, setPadelOn] = useState(false);
   const [tennisOn, setTennisOn] = useState(false);
   const [pAns, setPAns] = useState<Record<string, number>>({});
   const [tAns, setTAns] = useState<Record<string, number>>({});
@@ -260,25 +268,44 @@ export function QuestionnaireForm({
             </label>
           </div>
           )}
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setPadelOn(!padelOn)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors duration-200 cursor-pointer ${
-                padelOn ? "bg-green text-white border-green" : "border-line text-ink-soft"
-              }`}
-            >
-              Падел
-            </button>
-            <button
-              type="button"
-              onClick={() => setTennisOn(!tennisOn)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors duration-200 cursor-pointer ${
-                tennisOn ? "bg-burgundy text-white border-burgundy" : "border-line text-ink-soft"
-              }`}
-            >
-              Теннис
-            </button>
+          <div className="flex flex-col gap-2.5">
+            <p className="font-semibold text-sm">
+              Во что ты играешь?{" "}
+              <span className="text-ink-soft font-normal">можно выбрать оба</span>
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setPadelOn(!padelOn)}
+                className={`flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border-2 text-sm font-semibold transition-colors cursor-pointer ${
+                  padelOn
+                    ? "bg-green/10 border-green text-green"
+                    : "border-line text-ink-soft hover:border-ink-soft"
+                }`}
+              >
+                <span className={`w-2.5 h-2.5 rounded-full ${padelOn ? "bg-green" : "bg-ink-soft/30"}`} />
+                Падел
+                {padelOn && <Check size={16} />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTennisOn(!tennisOn)}
+                className={`flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border-2 text-sm font-semibold transition-colors cursor-pointer ${
+                  tennisOn
+                    ? "bg-burgundy/10 border-burgundy text-burgundy"
+                    : "border-line text-ink-soft hover:border-ink-soft"
+                }`}
+              >
+                <span className={`w-2.5 h-2.5 rounded-full ${tennisOn ? "bg-burgundy" : "bg-ink-soft/30"}`} />
+                Теннис
+                {tennisOn && <Check size={16} />}
+              </button>
+            </div>
+            {!padelOn && !tennisOn && (
+              <p className="text-xs text-ink-soft">
+                Выбери вид спорта, чтобы ответить на вопросы и получить свой уровень.
+              </p>
+            )}
           </div>
         </div>
 
