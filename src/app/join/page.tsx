@@ -10,11 +10,14 @@ export const dynamic = "force-dynamic";
 export default async function JoinPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; sport?: string }>;
 }) {
   await getLang();
   const [params, me] = await Promise.all([searchParams, currentUser()]);
   const loggedIn = !!me;
+  const sportParam = params.sport || "";
+  const initialPadel = sportParam.includes("padel");
+  const initialTennis = sportParam.includes("tennis");
 
   return (
     <div className="flex flex-col gap-8 max-w-5xl">
@@ -49,6 +52,8 @@ export default async function JoinPage({
         hasDb={hasSupabase()}
         loggedIn={loggedIn}
         submitAction={loggedIn ? setMyLevel : createPlayer}
+        initialPadel={initialPadel}
+        initialTennis={initialTennis}
       />
 
       <div className="grid md:grid-cols-2 gap-5">

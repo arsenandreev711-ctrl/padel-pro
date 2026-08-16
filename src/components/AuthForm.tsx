@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { LogIn, UserPlus, Camera } from "lucide-react";
+import { LogIn, UserPlus, Camera, Check } from "lucide-react";
 import { login, register } from "@/app/login/actions";
 import { PhoneField } from "@/components/PhoneField";
 
@@ -23,7 +23,11 @@ export function AuthForm({
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [photoErr, setPhotoErr] = useState<string | null>(null);
+  const [padel, setPadel] = useState(false);
+  const [tennis, setTennis] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const sportsValue = [padel ? "padel" : "", tennis ? "tennis" : ""].filter(Boolean).join(",");
 
   const initials =
     [firstName, lastName]
@@ -157,6 +161,38 @@ export function AuthForm({
             <span className={labelCls}>Номер телефона</span>
             <PhoneField initial={initialPhone} />
           </label>
+
+          <div className="flex flex-col gap-2">
+            <span className={labelCls}>
+              Во что играешь?{" "}
+              <span className="text-ink-soft font-normal text-xs">можно оба</span>
+            </span>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setPadel(!padel)}
+                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-colors cursor-pointer ${
+                  padel ? "bg-green/10 border-green text-green" : "border-line text-ink-soft hover:border-ink-soft"
+                }`}
+              >
+                <span className={`w-2.5 h-2.5 rounded-full ${padel ? "bg-green" : "bg-ink-soft/30"}`} />
+                Падел
+                {padel && <Check size={16} />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTennis(!tennis)}
+                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-colors cursor-pointer ${
+                  tennis ? "bg-burgundy/10 border-burgundy text-burgundy" : "border-line text-ink-soft hover:border-ink-soft"
+                }`}
+              >
+                <span className={`w-2.5 h-2.5 rounded-full ${tennis ? "bg-burgundy" : "bg-ink-soft/30"}`} />
+                Теннис
+                {tennis && <Check size={16} />}
+              </button>
+            </div>
+            <input type="hidden" name="sports" value={sportsValue} />
+          </div>
 
           <button
             type="submit"

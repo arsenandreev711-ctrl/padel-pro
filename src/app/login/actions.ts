@@ -96,7 +96,8 @@ export async function register(formData: FormData) {
 
   await setSession(player.id);
   revalidatePath("/");
-  redirect("/join");
+  const sports = str(formData.get("sports"));
+  redirect(sports ? `/join?sport=${encodeURIComponent(sports)}` : "/join");
 }
 
 export async function logout() {

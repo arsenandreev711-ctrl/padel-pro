@@ -211,15 +211,19 @@ export function QuestionnaireForm({
   hasDb,
   loggedIn = false,
   submitAction,
+  initialPadel = false,
+  initialTennis = false,
 }: {
   hasDb: boolean;
   loggedIn?: boolean;
   submitAction: (formData: FormData) => void;
+  initialPadel?: boolean;
+  initialTennis?: boolean;
 }) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("Бишкек");
-  const [padelOn, setPadelOn] = useState(false);
-  const [tennisOn, setTennisOn] = useState(false);
+  const [padelOn, setPadelOn] = useState(initialPadel);
+  const [tennisOn, setTennisOn] = useState(initialTennis);
   const [pAns, setPAns] = useState<Record<string, number>>({});
   const [tAns, setTAns] = useState<Record<string, number>>({});
   const [pSide, setPSide] = useState<CourtSide | null>(null);
