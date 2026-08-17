@@ -45,7 +45,8 @@ export async function setSession(id: string) {
   c.set(COOKIE, signSession(id), {
     httpOnly: true,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 180,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 365,
     path: "/",
   });
 }
